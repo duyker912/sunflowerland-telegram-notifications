@@ -36,18 +36,41 @@ const Dashboard = () => {
     async () => {
       const response = await api.get('/notifications');
       return response.data;
+    },
+    {
+      refetchInterval: 10000, // Refetch every 10 seconds
     }
   );
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
+      // Sync dữ liệu từ Portal Service trước
+      await api.post('/sunflower/sync/2749154680612546');
+      // Sau đó refetch dữ liệu
+      await refetch();
+      toast.success('Đã cập nhật dữ liệu từ game');
+    } catch (error) {
+      console.error('Sync error:', error);
+      // Nếu sync thất bại, vẫn refetch dữ liệu hiện có
       await refetch();
       toast.success('Đã cập nhật dữ liệu');
-    } catch (error) {
-      toast.error('Lỗi khi cập nhật dữ liệu');
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleTestNotification = async () => {
+    try {
+      const response = await api.post('/test-harvest-notification/1');
+      if (response.data.success) {
+        toast.success('Đã gửi thông báo test thành công!');
+      } else {
+        toast.error('Gửi thông báo thất bại');
+      }
+    } catch (error) {
+      console.error('Test notification error:', error);
+      toast.error('Lỗi khi gửi thông báo test');
     }
   };
 
@@ -114,14 +137,24 @@ const Dashboard = () => {
           </p>
         </div>
         
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="btn-outline flex items-center space-x-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          <span>Làm mới</span>
-        </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-outline flex items-center space-x-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>Làm mới</span>
+            </button>
+            
+            <button
+              onClick={handleTestNotification}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <Bell className="w-4 h-4" />
+              <span>Test Thông báo</span>
+            </button>
+          </div>
       </div>
 
       {/* Stats Cards */}
@@ -251,33 +284,39 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Recent Notifications */}
-      {notificationsData?.notifications?.length > 0 && (
-        <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Thông báo gần đây</h2>
-          <div className="space-y-4">
-            {notificationsData.notifications.slice(0, 5).map((notification) => (
-              <div key={notification.id} className="notification-card">
-                <div className="flex items-start space-x-3">
-                  <Bell className="w-5 h-5 text-sunflower-500 mt-0.5" />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{notification.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {new Date(notification.created_at).toLocaleString('vi-VN')}
-                    </p>
-                  </div>
-                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    notification.sent ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {notification.sent ? 'Đã gửi' : 'Chờ gửi'}
+        {/* Recent Notifications */}
+        {notificationsData?.notifications?.length > 0 && (
+          <div className="card">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Thông báo gần đây</h2>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-gray-500">Live</span>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {notificationsData.notifications.slice(0, 5).map((notification) => (
+                <div key={notification.id} className="notification-card">
+                  <div className="flex items-start space-x-3">
+                    <Bell className="w-5 h-5 text-sunflower-500 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-900">{notification.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {new Date(notification.created_at).toLocaleString('vi-VN')}
+                      </p>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      notification.sent ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {notification.sent ? 'Đã gửi' : 'Chờ gửi'}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
