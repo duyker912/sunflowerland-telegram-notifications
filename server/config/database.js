@@ -25,14 +25,8 @@ const config = {
   production: {
     client: 'postgresql',
     connection: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      ssl: { rejectUnauthorized: false },
-      // Force IPv4 connection
-      family: 4
+      connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
+      ssl: { rejectUnauthorized: false }
     },
     migrations: {
       directory: './migrations'
