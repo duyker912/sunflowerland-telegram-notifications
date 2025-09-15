@@ -732,45 +732,6 @@ async function sendTelegramMessage(chatId, text) {
 // Routes
 app.use('/api/sunflower', require('./routes/sunflower'));
 
-// Test notification service
-app.post('/api/test-notification', async (req, res) => {
-  try {
-    const notificationService = require('./services/notificationService');
-    const result = await notificationService.checkAndSendHarvestNotifications();
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Send test harvest notification
-app.post('/api/test-harvest-notification/:userId', async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const notificationService = require('./services/notificationService');
-    
-    // Tạo mock crop data
-    const mockCrop = {
-      id: 'test-crop-1',
-      crop_name: 'Test Sunflower',
-      harvest_time: new Date(),
-      progress: 100,
-      status: 'ready'
-    };
-    
-    const result = await notificationService.sendHarvestNotification(userId, mockCrop);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint không tồn tại' });

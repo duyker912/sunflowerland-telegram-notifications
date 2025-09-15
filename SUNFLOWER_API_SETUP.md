@@ -121,6 +121,8 @@ console.log('Cookies:', cookies);
 5. **Truy cập game** và **nhấn bookmark**
 6. **Copy JWT token** từ popup
 
+
+
 ### Bước 4: Cấu hình Environment Variables
 
 Thêm vào file `.env` hoặc `env.production`:
