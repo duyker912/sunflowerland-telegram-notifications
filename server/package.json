@@ -4,7 +4,7 @@
   "description": "Backend API cho hệ thống thông báo Telegram Sunflower Land",
   "main": "index.js",
   "scripts": {
-    "start": "node index.simple.js",
+    "start": "npm run db:migrate && node index.js",
     "dev": "nodemon index.js",
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
