@@ -25,7 +25,7 @@ const config = {
   production: {
     client: 'postgresql',
     connection: {
-      connectionString: 'postgresql://postgres:95o7YuloH9OrpgZ6@db.fzfegspgslnglxcegdbp.supabase.co:5432/postgres?sslmode=require',
+      connectionString: 'postgresql://postgres:intEHNXlUBGBqrkeswqXVmZjZZUjLYkK@ballast.proxy.rlwy.net:51539/railway',
       ssl: { rejectUnauthorized: false }
     },
     migrations: {
