@@ -50,6 +50,23 @@ app.get('/api/test-sunflower', async (req, res) => {
   }
 });
 
+// Check database schema
+app.get('/api/check-schema', async (req, res) => {
+  try {
+    const { checkSchema } = require('./check-schema');
+    const schema = await checkSchema();
+    res.json({
+      success: true,
+      data: schema
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Database test route
 app.get('/api/db-test', async (req, res) => {
   try {
