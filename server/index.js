@@ -41,6 +41,23 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/crops', require('./routes/crops'));
 app.use('/api/telegram', require('./routes/telegram').router);
 
+// Check database schema
+app.get('/api/check-schema', async (req, res) => {
+  try {
+    const { checkSchema } = require('./check-schema');
+    const schema = await checkSchema();
+    res.json({
+      success: true,
+      data: schema
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ 
