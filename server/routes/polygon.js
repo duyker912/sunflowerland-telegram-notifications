@@ -11,11 +11,21 @@ router.get('/test-connection', async (req, res) => {
     const result = await multiChainService.testConnection(network);
     res.json(result);
   } catch (error) {
+    console.error('Error in test-connection:', error);
     res.status(500).json({
       success: false,
       error: error.message
     });
   }
+});
+
+// Simple test endpoint
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Polygon routes are working!',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Test all blockchain connections
