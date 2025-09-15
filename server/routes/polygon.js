@@ -1,13 +1,43 @@
-// Polygon Blockchain Routes
+// Multi-Chain Blockchain Routes
 const express = require('express');
 const router = express.Router();
-const polygonService = require('../services/polygonService');
+const multiChainService = require('../services/polygonService');
 const auth = require('../middleware/auth');
 
 // Test blockchain connection
 router.get('/test-connection', async (req, res) => {
   try {
-    const result = await polygonService.testConnection();
+    const { network = 'polygon' } = req.query;
+    const result = await multiChainService.testConnection(network);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Test all blockchain connections
+router.get('/test-all-connections', async (req, res) => {
+  try {
+    const result = await multiChainService.testAllConnections();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get token info from Base network
+router.get('/token/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+    const { network = 'base' } = req.query;
+    
+    const result = await multiChainService.getTokenInfo(address, network);
     res.json(result);
   } catch (error) {
     res.status(500).json({
