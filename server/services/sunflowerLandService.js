@@ -1,11 +1,13 @@
 const axios = require('axios');
+const portalService = require('./portalService');
 
 class SunflowerLandService {
   constructor() {
-    this.baseURL = process.env.SUNFLOWER_API_URL || 'https://api.sunflowerland.io';
+    this.baseURL = process.env.SUNFLOWER_API_URL || 'https://api-dev.sunflower-land.com';
     this.jwtToken = process.env.SUNFLOWER_JWT_TOKEN; // JWT token thay vì API key
     this.rateLimitDelay = 1000; // 1 second between requests
     this.lastRequestTime = 0;
+    this.useMockData = true; // Tạm thời sử dụng mock data
   }
 
   /**
@@ -28,6 +30,10 @@ class SunflowerLandService {
    */
   async getPlayerFarm(playerId) {
     try {
+      if (this.useMockData) {
+        return await portalService.getPlayerFarm(playerId);
+      }
+
       await this.rateLimit();
       
       // Sử dụng API thật của Sunflower Land
@@ -58,6 +64,10 @@ class SunflowerLandService {
    */
   async getPlayerCrops(playerId) {
     try {
+      if (this.useMockData) {
+        return await portalService.getPlayerCrops(playerId);
+      }
+
       await this.rateLimit();
       
       // Sử dụng API thật của Sunflower Land
@@ -111,6 +121,10 @@ class SunflowerLandService {
    */
   async getPlayerInventory(playerId) {
     try {
+      if (this.useMockData) {
+        return await portalService.getPlayerInventory(playerId);
+      }
+
       await this.rateLimit();
       
       const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
@@ -140,6 +154,10 @@ class SunflowerLandService {
    */
   async getPlayerProfile(playerId) {
     try {
+      if (this.useMockData) {
+        return await portalService.getPlayerProfile(playerId);
+      }
+
       await this.rateLimit();
       
       const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
@@ -204,6 +222,10 @@ class SunflowerLandService {
    */
   async getAvailableCrops() {
     try {
+      if (this.useMockData) {
+        return await portalService.getAvailableCrops();
+      }
+
       await this.rateLimit();
       
       const response = await axios.get(`${this.baseURL}/crops`, {
@@ -233,6 +255,10 @@ class SunflowerLandService {
    */
   async testConnection() {
     try {
+      if (this.useMockData) {
+        return await portalService.testConnection();
+      }
+
       await this.rateLimit();
       
       // Test với API thật của Sunflower Land
@@ -269,6 +295,10 @@ class SunflowerLandService {
    */
   async syncPlayerCrops(playerId, userId) {
     try {
+      if (this.useMockData) {
+        return await portalService.syncPlayerCrops(playerId, userId);
+      }
+
       const cropsResult = await this.getPlayerCrops(playerId);
       
       if (!cropsResult.success) {
