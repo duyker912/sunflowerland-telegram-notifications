@@ -51,35 +51,48 @@ class EventMonitorService {
       // Lưu contract reference
       this.contracts[`${network}_${contractAddress}`] = contract;
 
-      // Bắt đầu monitor Transfer events
+      // Bắt đầu monitor Transfer events với error handling
       if (eventTypes.includes('Transfer')) {
         contract.on('Transfer', async (from, to, value, event) => {
-          await this.handleTransferEvent({
-            network,
-            contractAddress,
-            from,
-            to,
-            value: ethers.formatUnits(value, 18), // FLOWER có 18 decimals
-            transactionHash: event.transactionHash,
-            blockNumber: event.blockNumber,
-            timestamp: new Date()
-          });
+          try {
+            await this.handleTransferEvent({
+              network,
+              contractAddress,
+              from,
+              to,
+              value: ethers.formatUnits(value, 18), // FLOWER có 18 decimals
+              transactionHash: event.transactionHash,
+              blockNumber: event.blockNumber,
+              timestamp: new Date()
+            });
+          } catch (error) {
+            console.error('Error handling Transfer event:', error.message);
+          }
+        });
+        
+        // Handle filter errors
+        contract.on('error', (error) => {
+          console.error('Contract filter error:', error.message);
         });
       }
 
-      // Bắt đầu monitor Approval events
+      // Bắt đầu monitor Approval events với error handling
       if (eventTypes.includes('Approval')) {
         contract.on('Approval', async (owner, spender, value, event) => {
-          await this.handleApprovalEvent({
-            network,
-            contractAddress,
-            owner,
-            spender,
-            value: ethers.formatUnits(value, 18),
-            transactionHash: event.transactionHash,
-            blockNumber: event.blockNumber,
-            timestamp: new Date()
-          });
+          try {
+            await this.handleApprovalEvent({
+              network,
+              contractAddress,
+              owner,
+              spender,
+              value: ethers.formatUnits(value, 18),
+              transactionHash: event.transactionHash,
+              blockNumber: event.blockNumber,
+              timestamp: new Date()
+            });
+          } catch (error) {
+            console.error('Error handling Approval event:', error.message);
+          }
         });
       }
 
