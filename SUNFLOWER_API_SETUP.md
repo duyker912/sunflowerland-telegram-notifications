@@ -1,12 +1,18 @@
-# 🌻 Hướng dẫn lấy JWT Token từ Sunflower Land
+# 🌻 Hướng dẫn chi tiết lấy JWT Token từ Sunflower Land
 
 ## 📋 Tổng quan
 
 Sunflower Land sử dụng **JWT Token** thay vì API key truyền thống để xác thực. JWT token này được cung cấp thông qua URL parameter khi người chơi truy cập portal.
 
-## 🔑 Cách lấy JWT Token
+## 🔑 Cách lấy JWT Token - Hướng dẫn từng bước
 
-### Bước 1: Tạo Portal trên Sunflower Land
+### Bước 1: Truy cập Sunflower Land Game
+
+1. **Mở trình duyệt** và truy cập: [https://sunflowerland.io](https://sunflowerland.io)
+2. **Kết nối ví** (MetaMask, WalletConnect, etc.)
+3. **Đăng nhập** vào game và chơi một chút để có dữ liệu
+
+### Bước 2: Tạo Portal trên Sunflower Land
 
 1. **Truy cập**: [Sunflower Land Developer Portal](https://docs.sunflower-land.com/contributing/portals/portal-apis)
 2. **Đăng ký** tài khoản developer nếu chưa có
@@ -15,15 +21,48 @@ Sunflower Land sử dụng **JWT Token** thay vì API key truyền thống để
    - Description: `Telegram notification system for harvest reminders`
    - Redirect URL: `https://your-domain.com/auth/sunflower/callback`
 
-### Bước 2: Lấy JWT Token
+### Bước 3: Lấy JWT Token từ Game
 
-JWT token sẽ được cung cấp qua URL parameter khi người chơi truy cập portal:
+#### Cách 1: Sử dụng Browser Developer Tools
 
+1. **Mở game** trong trình duyệt: [https://sunflowerland.io](https://sunflowerland.io)
+2. **Nhấn F12** để mở Developer Tools
+3. **Chuyển sang tab Console**
+4. **Gõ lệnh** sau để lấy JWT token:
+
+```javascript
+// Lấy JWT token từ localStorage
+const jwt = localStorage.getItem('jwt');
+console.log('JWT Token:', jwt);
+
+// Hoặc lấy từ sessionStorage
+const sessionJwt = sessionStorage.getItem('jwt');
+console.log('Session JWT Token:', sessionJwt);
+
+// Hoặc lấy từ cookies
+const cookies = document.cookie;
+console.log('Cookies:', cookies);
 ```
-https://your-portal.sunflower-land.com/?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
 
-### Bước 3: Cấu hình Environment Variables
+#### Cách 2: Sử dụng Network Tab
+
+1. **Mở Developer Tools** (F12)
+2. **Chuyển sang tab Network**
+3. **Refresh trang** game
+4. **Tìm request** có chứa JWT token trong headers
+5. **Copy token** từ Authorization header
+
+#### Cách 3: Sử dụng Portal URL
+
+1. **Tạo portal** trên Sunflower Land Developer Portal
+2. **Lấy portal URL** từ dashboard
+3. **Truy cập portal URL** với JWT parameter:
+   ```
+   https://your-portal.sunflower-land.com/?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
+4. **Copy JWT token** từ URL parameter
+
+### Bước 4: Cấu hình Environment Variables
 
 Thêm vào file `.env` hoặc `env.production`:
 
@@ -33,30 +72,87 @@ SUNFLOWER_API_URL=https://api.sunflowerland.io
 SUNFLOWER_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... # JWT token từ portal
 ```
 
-## 🚀 Cách sử dụng
+#### Cấu hình trên Railway:
+
+1. **Truy cập** Railway Dashboard: [https://railway.app](https://railway.app)
+2. **Chọn project** `sunflowerland-telegram-notifications`
+3. **Vào tab Variables**
+4. **Thêm biến môi trường**:
+   - `SUNFLOWER_API_URL` = `https://api.sunflowerland.io`
+   - `SUNFLOWER_JWT_TOKEN` = `your_jwt_token_here` (thay bằng JWT token thật)
+5. **Save** và **Redeploy** project
+
+## 🚀 Cách sử dụng - Hướng dẫn chi tiết
 
 ### 1. Test API Connection
 
+**Sử dụng curl:**
 ```bash
-GET /api/test-sunflower
+curl -X GET "https://sunflowerland-telegram-notifications-production.up.railway.app/api/test-sunflower"
 ```
 
-### 2. Lấy thông tin player
-
-```bash
-GET /api/sunflower/player/{playerId}/profile
+**Sử dụng PowerShell:**
+```powershell
+Invoke-WebRequest -Uri "https://sunflowerland-telegram-notifications-production.up.railway.app/api/test-sunflower" -Method GET
 ```
 
-### 3. Lấy danh sách cây trồng
-
-```bash
-GET /api/sunflower/player/{playerId}/crops
+**Kết quả mong đợi:**
+```json
+{
+  "success": true,
+  "message": "API connection successful",
+  "data": {
+    "status": "ok",
+    "timestamp": "2025-09-15T10:30:00Z"
+  }
+}
 ```
 
-### 4. Sync dữ liệu vào database
+### 2. Lấy Player ID từ Game
+
+**Cách 1: Sử dụng Developer Tools**
+1. **Mở game** trong trình duyệt
+2. **Nhấn F12** → Console tab
+3. **Gõ lệnh**:
+```javascript
+// Lấy player ID
+const playerId = window.gameState?.playerId || window.playerId;
+console.log('Player ID:', playerId);
+
+// Hoặc lấy từ localStorage
+const storedPlayerId = localStorage.getItem('playerId');
+console.log('Stored Player ID:', storedPlayerId);
+```
+
+**Cách 2: Sử dụng Network Tab**
+1. **Mở Developer Tools** → Network tab
+2. **Refresh game**
+3. **Tìm request** có chứa player ID trong URL hoặc response
+
+### 3. Lấy thông tin player
 
 ```bash
-POST /api/sunflower/sync/{playerId}
+curl -X GET "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/player/YOUR_PLAYER_ID/profile"
+```
+
+### 4. Lấy danh sách cây trồng
+
+```bash
+curl -X GET "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/player/YOUR_PLAYER_ID/crops"
+```
+
+### 5. Sync dữ liệu vào database
+
+```bash
+curl -X POST "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/sync/YOUR_PLAYER_ID"
+```
+
+### 6. Liên kết Player ID với tài khoản
+
+```bash
+curl -X POST "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/link-player" \
+  -H "Content-Type: application/json" \
+  -d '{"playerId": "YOUR_PLAYER_ID"}'
 ```
 
 ## 🔧 API Endpoints có sẵn
@@ -128,9 +224,107 @@ const { data: cropsData } = useQuery(
 - **Discord**: [Sunflower Land Discord](https://discord.gg/sunflowerland)
 - **GitHub**: [Sunflower Land GitHub](https://github.com/sunflower-land/sunflower-land)
 
-## ⚠️ Lưu ý
+## 🔧 Troubleshooting - Xử lý lỗi thường gặp
 
-- JWT token có thể có thời hạn sử dụng
-- Cần refresh token định kỳ
-- API có thể thay đổi, cần cập nhật theo documentation chính thức
-- Rate limiting: 1 request/second để tránh spam API
+### Lỗi 1: "API connection failed"
+
+**Nguyên nhân:** JWT token không hợp lệ hoặc hết hạn
+
+**Giải pháp:**
+1. **Kiểm tra JWT token** có đúng format không
+2. **Lấy JWT token mới** từ game
+3. **Cập nhật** environment variable trên Railway
+4. **Redeploy** project
+
+### Lỗi 2: "Player not found"
+
+**Nguyên nhân:** Player ID không tồn tại hoặc không đúng
+
+**Giải pháp:**
+1. **Kiểm tra Player ID** có đúng không
+2. **Đảm bảo** đã đăng nhập game và có dữ liệu
+3. **Thử** lấy Player ID bằng cách khác
+
+### Lỗi 3: "Rate limit exceeded"
+
+**Nguyên nhân:** Gọi API quá nhiều lần
+
+**Giải pháp:**
+1. **Chờ** 1-2 phút trước khi gọi lại
+2. **Giảm** tần suất gọi API
+3. **Sử dụng** cache để giảm số lần gọi API
+
+### Lỗi 4: "CORS error"
+
+**Nguyên nhân:** Browser chặn cross-origin requests
+
+**Giải pháp:**
+1. **Sử dụng** server-side API calls
+2. **Cấu hình** CORS headers đúng cách
+3. **Sử dụng** proxy server
+
+## 📝 Ví dụ thực tế
+
+### Ví dụ 1: Lấy JWT Token từ Console
+
+```javascript
+// Mở game trong trình duyệt
+// Nhấn F12 → Console tab
+// Gõ lệnh sau:
+
+// Lấy JWT token
+const jwt = localStorage.getItem('jwt') || sessionStorage.getItem('jwt');
+console.log('JWT Token:', jwt);
+
+// Lấy Player ID
+const playerId = window.gameState?.playerId || localStorage.getItem('playerId');
+console.log('Player ID:', playerId);
+
+// Copy kết quả và sử dụng
+```
+
+### Ví dụ 2: Test API với PowerShell
+
+```powershell
+# Test API connection
+$response = Invoke-WebRequest -Uri "https://sunflowerland-telegram-notifications-production.up.railway.app/api/test-sunflower" -Method GET
+$response.Content
+
+# Lấy thông tin player (thay YOUR_PLAYER_ID bằng ID thật)
+$playerResponse = Invoke-WebRequest -Uri "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/player/YOUR_PLAYER_ID/profile" -Method GET
+$playerResponse.Content
+```
+
+### Ví dụ 3: Liên kết Player ID
+
+```powershell
+# Liên kết Player ID với tài khoản
+$body = @{
+    playerId = "YOUR_PLAYER_ID"
+} | ConvertTo-Json
+
+$response = Invoke-WebRequest -Uri "https://sunflowerland-telegram-notifications-production.up.railway.app/api/sunflower/link-player" -Method POST -Body $body -ContentType "application/json"
+$response.Content
+```
+
+## 🎯 Checklist hoàn thành
+
+- [ ] **Truy cập** Sunflower Land game và đăng nhập
+- [ ] **Lấy JWT token** từ Developer Tools
+- [ ] **Lấy Player ID** từ game
+- [ ] **Cấu hình** environment variables trên Railway
+- [ ] **Test API connection** với `/api/test-sunflower`
+- [ ] **Liên kết Player ID** với tài khoản
+- [ ] **Sync dữ liệu** cây trồng vào database
+- [ ] **Test** các API endpoints khác
+- [ ] **Cấu hình** Telegram bot để nhận thông báo
+
+## ⚠️ Lưu ý quan trọng
+
+- **JWT token có thể có thời hạn sử dụng** - cần refresh định kỳ
+- **Cần refresh token** khi hết hạn
+- **API có thể thay đổi** - cần cập nhật theo documentation chính thức
+- **Rate limiting: 1 request/second** để tránh spam API
+- **Không chia sẻ JWT token** với người khác
+- **Lưu trữ token** trong environment variables an toàn
+- **Backup token** để tránh mất dữ liệu
