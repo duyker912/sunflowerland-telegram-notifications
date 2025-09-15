@@ -113,7 +113,7 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      const response = await axios.get(`${this.baseURL}/player/${playerId}/inventory`, {
+      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      const response = await axios.get(`${this.baseURL}/player/${playerId}`, {
+      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
