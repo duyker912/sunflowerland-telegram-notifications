@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,23 @@ app.get('/health', (req, res) => {
 // Test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' });
+});
+
+// Database test route
+app.get('/api/db-test', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    const result = await db.raw('SELECT 1 as test');
+    res.json({ 
+      message: 'Database connected!', 
+      result: result.rows[0] 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Database connection failed', 
+      message: error.message 
+    });
+  }
 });
 
 // 404 handler
