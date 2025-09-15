@@ -80,6 +80,8 @@ app.listen(PORT, () => {
   console.log(`🚀 Server đang chạy trên port ${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV}`);
   console.log(`🕐 Cron jobs: ${Object.keys(cronService.getJobStatus()).length} jobs started`);
+  console.log(`🗄️ Database: ${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
+  console.log(`🤖 Telegram Bot: ${process.env.TELEGRAM_BOT_TOKEN ? 'Configured' : 'NOT CONFIGURED'}`);
 });
 
 module.exports = app;
