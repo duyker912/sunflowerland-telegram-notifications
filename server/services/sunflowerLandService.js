@@ -1,0 +1,299 @@
+const axios = require('axios');
+
+class SunflowerLandService {
+  constructor() {
+    this.baseURL = process.env.SUNFLOWER_API_URL || 'https://api.sunflowerland.io';
+    this.apiKey = process.env.SUNFLOWER_API_KEY;
+    this.rateLimitDelay = 1000; // 1 second between requests
+    this.lastRequestTime = 0;
+  }
+
+  /**
+   * Rate limiting để tránh spam API
+   */
+  async rateLimit() {
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    
+    if (timeSinceLastRequest < this.rateLimitDelay) {
+      const delay = this.rateLimitDelay - timeSinceLastRequest;
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    this.lastRequestTime = Date.now();
+  }
+
+  /**
+   * Lấy thông tin farm của player
+   */
+  async getPlayerFarm(playerId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/player/${playerId}/farm`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching player farm:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy danh sách cây trồng hiện tại
+   */
+  async getPlayerCrops(playerId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/player/${playerId}/crops`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+
+      // Transform data để phù hợp với database
+      const crops = response.data.crops?.map(crop => ({
+        id: crop.id,
+        name: crop.name,
+        planted_at: new Date(crop.plantedAt),
+        harvest_time: new Date(crop.harvestAt),
+        status: this.getCropStatus(crop),
+        progress: this.calculateProgress(crop),
+        quantity: crop.amount || 1,
+        x: crop.x,
+        y: crop.y
+      })) || [];
+
+      return {
+        success: true,
+        data: crops
+      };
+    } catch (error) {
+      console.error('Error fetching player crops:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: []
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin inventory của player
+   */
+  async getPlayerInventory(playerId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/player/${playerId}/inventory`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching player inventory:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin player profile
+   */
+  async getPlayerProfile(playerId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/player/${playerId}`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching player profile:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Xác định trạng thái cây trồng
+   */
+  getCropStatus(crop) {
+    const now = new Date();
+    const harvestTime = new Date(crop.harvestAt);
+    
+    if (crop.harvested) {
+      return 'harvested';
+    } else if (harvestTime <= now) {
+      return 'ready';
+    } else {
+      return 'growing';
+    }
+  }
+
+  /**
+   * Tính toán tiến độ phát triển
+   */
+  calculateProgress(crop) {
+    const now = new Date();
+    const plantedTime = new Date(crop.plantedAt);
+    const harvestTime = new Date(crop.harvestAt);
+    
+    const totalTime = harvestTime - plantedTime;
+    const elapsedTime = now - plantedTime;
+    
+    if (crop.harvested) {
+      return 100;
+    }
+    
+    const progress = Math.min(100, Math.max(0, (elapsedTime / totalTime) * 100));
+    return Math.round(progress);
+  }
+
+  /**
+   * Lấy thông tin về các loại cây trồng có sẵn
+   */
+  async getAvailableCrops() {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/crops`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      });
+
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching available crops:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: []
+      };
+    }
+  }
+
+  /**
+   * Kiểm tra kết nối API
+   */
+  async testConnection() {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/health`, {
+        timeout: 5000
+      });
+
+      return {
+        success: true,
+        message: 'API connection successful',
+        data: response.data
+      };
+    } catch (error) {
+      console.error('API connection test failed:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        message: 'API connection failed'
+      };
+    }
+  }
+
+  /**
+   * Sync dữ liệu cây trồng từ game vào database
+   */
+  async syncPlayerCrops(playerId, userId) {
+    try {
+      const cropsResult = await this.getPlayerCrops(playerId);
+      
+      if (!cropsResult.success) {
+        return {
+          success: false,
+          error: cropsResult.error
+        };
+      }
+
+      const db = require('../config/database');
+      
+      // Xóa crops cũ của user
+      await db('user_crops').where({ user_id: userId }).del();
+      
+      // Thêm crops mới
+      const cropsToInsert = cropsResult.data.map(crop => ({
+        user_id: userId,
+        crop_id: crop.id,
+        planted_at: crop.planted_at,
+        harvest_time: crop.harvest_time,
+        status: crop.status,
+        progress: crop.progress,
+        game_data: JSON.stringify({
+          quantity: crop.quantity,
+          x: crop.x,
+          y: crop.y,
+          name: crop.name
+        })
+      }));
+
+      if (cropsToInsert.length > 0) {
+        await db('user_crops').insert(cropsToInsert);
+      }
+
+      return {
+        success: true,
+        message: `Synced ${cropsToInsert.length} crops`,
+        data: cropsToInsert
+      };
+    } catch (error) {
+      console.error('Error syncing player crops:', error.message);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+}
+
+module.exports = new SunflowerLandService();

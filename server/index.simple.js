@@ -35,6 +35,21 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' });
 });
 
+// Test Sunflower Land API connection
+app.get('/api/test-sunflower', async (req, res) => {
+  try {
+    const sunflowerService = require('./services/sunflowerLandService');
+    const result = await sunflowerService.testConnection();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to test Sunflower Land API',
+      message: error.message
+    });
+  }
+});
+
 // Database test route
 app.get('/api/db-test', async (req, res) => {
   try {
@@ -196,23 +211,24 @@ app.post('/api/run-migrations', async (req, res) => {
   try {
     const db = require('./config/database');
     
-    // Create users table
-    await db.raw(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        telegram_chat_id VARCHAR(255),
-        telegram_username VARCHAR(255),
-        telegram_linked BOOLEAN DEFAULT FALSE,
-        notifications_enabled BOOLEAN DEFAULT TRUE,
-        notification_settings JSONB DEFAULT '{}',
-        last_login TIMESTAMP,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+        // Create users table
+        await db.raw(`
+          CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) UNIQUE NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            telegram_chat_id VARCHAR(255),
+            telegram_username VARCHAR(255),
+            telegram_linked BOOLEAN DEFAULT FALSE,
+            notifications_enabled BOOLEAN DEFAULT TRUE,
+            notification_settings JSONB DEFAULT '{}',
+            sunflower_player_id VARCHAR(255),
+            last_login TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
     
     // Create crops table
     await db.raw(`
@@ -227,19 +243,20 @@ app.post('/api/run-migrations', async (req, res) => {
       )
     `);
     
-    // Create user_crops table
-    await db.raw(`
-      CREATE TABLE IF NOT EXISTS user_crops (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        crop_id INTEGER REFERENCES crops(id) ON DELETE CASCADE,
-        planted_at TIMESTAMP NOT NULL,
-        harvest_time TIMESTAMP NOT NULL,
-        status VARCHAR(50) DEFAULT 'growing',
-        progress INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+        // Create user_crops table
+        await db.raw(`
+          CREATE TABLE IF NOT EXISTS user_crops (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            crop_id INTEGER REFERENCES crops(id) ON DELETE CASCADE,
+            planted_at TIMESTAMP NOT NULL,
+            harvest_time TIMESTAMP NOT NULL,
+            status VARCHAR(50) DEFAULT 'growing',
+            progress INTEGER DEFAULT 0,
+            game_data JSONB DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
     
     // Create notifications table
     await db.raw(`
@@ -694,6 +711,9 @@ async function sendTelegramMessage(chatId, text) {
     console.error('Failed to send Telegram message:', error);
   }
 }
+
+// Routes
+app.use('/api/sunflower', require('./routes/sunflower'));
 
 // 404 handler
 app.use('*', (req, res) => {
