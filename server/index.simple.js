@@ -71,6 +71,41 @@ app.get('/api/db-test', async (req, res) => {
   }
 });
 
+// Test migrations
+app.get('/api/migrate-test', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    
+    // Try to create a simple table
+    await db.raw(`
+      CREATE TABLE IF NOT EXISTS test_table (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Insert test data
+    await db.raw(`
+      INSERT INTO test_table (name) VALUES ('test') 
+      ON CONFLICT DO NOTHING
+    `);
+    
+    // Select test data
+    const result = await db.raw('SELECT * FROM test_table LIMIT 1');
+    
+    res.json({ 
+      message: 'Migrations test successful!', 
+      result: result.rows[0]
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Migrations test failed', 
+      message: error.message
+    });
+  }
+});
+
 // Simple register route without database
 app.post('/api/auth/register', async (req, res) => {
   try {
