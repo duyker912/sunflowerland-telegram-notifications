@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { 
-  Sunflower, 
+  Sun, 
   Clock, 
   CheckCircle, 
   AlertCircle,
@@ -132,7 +132,7 @@ const Dashboard = () => {
               <p className="text-sm font-medium text-gray-600">Tổng cây trồng</p>
               <p className="text-2xl font-bold text-gray-900">{totalCrops}</p>
             </div>
-            <Sunflower className="w-8 h-8 text-sunflower-500" />
+            <Sun className="w-8 h-8 text-sunflower-500" />
           </div>
         </div>
 
@@ -205,7 +205,7 @@ const Dashboard = () => {
 
         {totalCrops === 0 ? (
           <div className="text-center py-12">
-            <Sunflower className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <Sun className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Chưa có cây trồng nào
             </h3>
@@ -222,7 +222,7 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-sunflower-400 rounded-lg flex items-center justify-center">
-                        <Sunflower className="w-6 h-6 text-white" />
+                        <Sun className="w-6 h-6 text-white" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">{crop.name}</h3>

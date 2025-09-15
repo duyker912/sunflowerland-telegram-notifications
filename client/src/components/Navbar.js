@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, User, Settings, Bell, LogOut, Sunflower } from 'lucide-react';
+import { Menu, X, User, Settings, Bell, LogOut, Sun } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-gradient">
-            <Sunflower className="w-8 h-8 text-sunflower-500" />
+            <Sun className="w-8 h-8 text-sunflower-500" />
             <span>Sunflower Land</span>
           </Link>
 

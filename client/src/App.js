@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast';
 
 // Components
 import Navbar from './components/Navbar';
-import AuthProvider from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Pages
 import Home from './pages/Home';

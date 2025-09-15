@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  Sunflower, 
+  Sun, 
   Bell, 
   Smartphone, 
   Zap, 
@@ -52,11 +52,11 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-center mb-8">
-              <Sunflower className="w-20 h-20 text-sunflower-500 animate-bounce-slow" />
+              <Sun className="w-20 h-20 text-sunflower-500 animate-bounce-slow" />
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold text-gradient mb-6">
-              Sunflower Land
+              Sun Land
             </h1>
             
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -172,7 +172,7 @@ const Home = () => {
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
             Đăng ký ngay hôm nay và trải nghiệm hệ thống thông báo 
-            thu hoạch thông minh nhất cho game Sunflower Land.
+            thu hoạch thông minh nhất cho game Sun Land.
           </p>
           
           {!isAuthenticated && (
