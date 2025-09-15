@@ -47,6 +47,112 @@ router.get('/token/:address', async (req, res) => {
   }
 });
 
+// Discover farm contracts
+router.get('/discover-farms', async (req, res) => {
+  try {
+    const farmDiscoveryService = require('../services/farmDiscovery');
+    const result = await farmDiscoveryService.getAllFarmContracts();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Find farms by pattern
+router.get('/find-farms-pattern', async (req, res) => {
+  try {
+    const farmDiscoveryService = require('../services/farmDiscovery');
+    const result = await farmDiscoveryService.findFarmsByPattern();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Analyze address for farm contract
+router.get('/analyze-address/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+    const farmDiscoveryService = require('../services/farmDiscovery');
+    const result = await farmDiscoveryService.analyzeAddress(address);
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Start monitoring blockchain events
+router.post('/start-monitoring', async (req, res) => {
+  try {
+    const { contractAddress, network = 'base', eventTypes = ['Transfer'] } = req.body;
+    
+    if (!contractAddress) {
+      return res.status(400).json({
+        success: false,
+        error: 'Contract address is required'
+      });
+    }
+    
+    const eventMonitorService = require('../services/eventMonitor');
+    const result = await eventMonitorService.startMonitoring(contractAddress, network, eventTypes);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Stop monitoring blockchain events
+router.post('/stop-monitoring', async (req, res) => {
+  try {
+    const { contractAddress, network = 'base' } = req.body;
+    
+    if (!contractAddress) {
+      return res.status(400).json({
+        success: false,
+        error: 'Contract address is required'
+      });
+    }
+    
+    const eventMonitorService = require('../services/eventMonitor');
+    const result = await eventMonitorService.stopMonitoring(contractAddress, network);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get monitoring status
+router.get('/monitoring-status', async (req, res) => {
+  try {
+    const eventMonitorService = require('../services/eventMonitor');
+    const result = eventMonitorService.getMonitoringStatus();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Get farm data from blockchain
 router.get('/farm/:farmId', auth, async (req, res) => {
   try {
