@@ -30,7 +30,8 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      const response = await axios.get(`${this.baseURL}/player/${playerId}/farm`, {
+      // Sử dụng API thật của Sunflower Land
+      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -59,16 +60,8 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      // Kiểm tra JWT token
-      if (!this.jwtToken || this.jwtToken === 'your_jwt_token_here') {
-        return {
-          success: false,
-          error: 'JWT token not configured',
-          message: 'Please configure SUNFLOWER_JWT_TOKEN in environment variables'
-        };
-      }
-      
-      const response = await axios.get(`${this.baseURL}/player/${playerId}/crops`, {
+      // Sử dụng API thật của Sunflower Land
+      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -76,18 +69,28 @@ class SunflowerLandService {
         timeout: 10000
       });
 
-      // Transform data để phù hợp với database
-      const crops = response.data.crops?.map(crop => ({
-        id: crop.id,
-        name: crop.name,
-        planted_at: new Date(crop.plantedAt),
-        harvest_time: new Date(crop.harvestAt),
-        status: this.getCropStatus(crop),
-        progress: this.calculateProgress(crop),
-        quantity: crop.amount || 1,
-        x: crop.x,
-        y: crop.y
-      })) || [];
+      // Transform data từ game state
+      const gameState = response.data.farm;
+      const crops = [];
+      
+      // Lấy crops từ game state
+      if (gameState.crops) {
+        Object.entries(gameState.crops).forEach(([key, crop]) => {
+          if (crop && crop.plantedAt) {
+            crops.push({
+              id: key,
+              name: crop.name || 'Unknown Crop',
+              planted_at: new Date(crop.plantedAt),
+              harvest_time: new Date(crop.harvestedAt || crop.plantedAt + (crop.growthTime || 3600000)),
+              status: this.getCropStatus(crop),
+              progress: this.calculateProgress(crop),
+              quantity: crop.amount || 1,
+              x: crop.x || 0,
+              y: crop.y || 0
+            });
+          }
+        });
+      }
 
       return {
         success: true,
@@ -232,16 +235,8 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      // Kiểm tra JWT token
-      if (!this.jwtToken || this.jwtToken === 'your_jwt_token_here') {
-        return {
-          success: false,
-          error: 'JWT token not configured',
-          message: 'Please configure SUNFLOWER_JWT_TOKEN in environment variables'
-        };
-      }
-      
-      const response = await axios.get(`${this.baseURL}/health`, {
+      // Test với API thật của Sunflower Land
+      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -251,8 +246,13 @@ class SunflowerLandService {
 
       return {
         success: true,
-        message: 'API connection successful',
-        data: response.data
+        message: 'Sunflower Land API connection successful',
+        data: {
+          status: 'ok',
+          timestamp: new Date().toISOString(),
+          farmId: response.data.farm?.id,
+          playerId: response.data.farm?.playerId
+        }
       };
     } catch (error) {
       console.error('API connection test failed:', error.message);
