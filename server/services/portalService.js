@@ -257,15 +257,12 @@ class PortalService {
       for (const crop of crops) {
         await db('user_crops').insert({
           user_id: userId,
-          crop_name: crop.name,
+          crop_id: crop.id,
           planted_at: crop.planted_at,
-          harvest_time: crop.harvest_time,
-          status: crop.status,
-          progress: crop.progress,
+          harvest_ready_at: crop.harvest_time,
+          is_harvested: crop.status === 'harvested',
           quantity: crop.quantity,
-          x: crop.x,
-          y: crop.y,
-          game_data: JSON.stringify(crop)
+          notification_sent: false
         });
       }
 
