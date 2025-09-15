@@ -259,10 +259,9 @@ class PortalService {
           user_id: userId,
           crop_id: crop.id,
           planted_at: crop.planted_at,
-          harvest_ready_at: crop.harvest_time,
-          is_harvested: crop.status === 'harvested',
-          quantity: crop.quantity,
-          notification_sent: false
+          harvest_time: crop.harvest_time,
+          status: crop.status,
+          progress: crop.progress
         });
       }
 
