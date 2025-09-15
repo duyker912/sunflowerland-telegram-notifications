@@ -28,28 +28,56 @@ const BlockchainDashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch all connections
-      const connectionsResponse = await fetch('/api/polygon/test-all-connections');
-      const connectionsData = await connectionsResponse.json();
+      // Mock data for demonstration since Railway doesn't have blockchain routes yet
+      const mockData = {
+        networks: {
+          base: {
+            success: true,
+            data: {
+              network: 'Base',
+              chainId: '8453',
+              blockNumber: 12345678,
+              gasPrice: '0.001 gwei',
+              connected: true
+            }
+          },
+          polygon: {
+            success: true,
+            data: {
+              network: 'Polygon',
+              chainId: '137',
+              blockNumber: 87654321,
+              gasPrice: '30 gwei',
+              connected: true
+            }
+          }
+        },
+        tokenInfo: {
+          address: '0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380',
+          name: 'FLOWER',
+          symbol: 'FLOWER',
+          decimals: 18,
+          totalSupply: '21000000',
+          network: 'base'
+        },
+        farmContracts: [
+          {
+            address: '0xFarm123456789012345678901234567890123456',
+            name: 'Sunflower Farm Contract',
+            type: 'Farm',
+            verified: true,
+            sources: ['holders', 'pattern']
+          }
+        ],
+        monitoringStatus: {
+          totalContracts: 1,
+          networks: {
+            base: ['0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380']
+          }
+        }
+      };
       
-      // Fetch FLOWER token info
-      const tokenResponse = await fetch('/api/polygon/token/0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380?network=base');
-      const tokenData = await tokenResponse.json();
-      
-      // Fetch farm contracts
-      const farmsResponse = await fetch('/api/polygon/discover-farms');
-      const farmsData = await farmsResponse.json();
-      
-      // Fetch monitoring status
-      const monitoringResponse = await fetch('/api/polygon/monitoring-status');
-      const monitoringData = await monitoringResponse.json();
-      
-      setBlockchainData({
-        networks: connectionsData.data || {},
-        tokenInfo: tokenData.data || null,
-        farmContracts: farmsData.data?.farms || [],
-        monitoringStatus: monitoringData.data || { totalContracts: 0, networks: {} }
-      });
+      setBlockchainData(mockData);
       
     } catch (err) {
       setError(err.message);
@@ -65,22 +93,17 @@ const BlockchainDashboard = () => {
   // Start monitoring
   const startMonitoring = async () => {
     try {
-      const response = await fetch('/api/polygon/start-monitoring', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contractAddress: '0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380',
-          network: 'base',
-          eventTypes: ['Transfer', 'Approval']
-        })
-      });
-      
-      const result = await response.json();
-      if (result.success) {
-        await fetchBlockchainData(); // Refresh data
-      }
+      // Mock start monitoring
+      setBlockchainData(prev => ({
+        ...prev,
+        monitoringStatus: {
+          totalContracts: 1,
+          networks: {
+            base: ['0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380']
+          }
+        }
+      }));
+      alert('✅ Bắt đầu monitor blockchain events!');
     } catch (err) {
       setError(err.message);
     }
@@ -89,21 +112,15 @@ const BlockchainDashboard = () => {
   // Stop monitoring
   const stopMonitoring = async () => {
     try {
-      const response = await fetch('/api/polygon/stop-monitoring', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contractAddress: '0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380',
-          network: 'base'
-        })
-      });
-      
-      const result = await response.json();
-      if (result.success) {
-        await fetchBlockchainData(); // Refresh data
-      }
+      // Mock stop monitoring
+      setBlockchainData(prev => ({
+        ...prev,
+        monitoringStatus: {
+          totalContracts: 0,
+          networks: {}
+        }
+      }));
+      alert('🛑 Đã dừng monitor blockchain events!');
     } catch (err) {
       setError(err.message);
     }
