@@ -28,8 +28,8 @@ const BlockchainDashboard = () => {
     try {
       setLoading(true);
       
-      // Mock data for demonstration since Railway doesn't have blockchain routes yet
-      const mockData = {
+      // Try to fetch real data from Railway, fallback to mock data
+      let mockData = {
         networks: {
           base: {
             success: true,
@@ -76,6 +76,18 @@ const BlockchainDashboard = () => {
           }
         }
       };
+      
+      // Try to fetch from Railway first
+      try {
+        const response = await fetch('/api/blockchain/test-all');
+        if (response.ok) {
+          const realData = await response.json();
+          setBlockchainData(realData);
+          return;
+        }
+      } catch (err) {
+        console.log('Using mock data:', err.message);
+      }
       
       setBlockchainData(mockData);
       
