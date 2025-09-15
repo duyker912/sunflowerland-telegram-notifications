@@ -30,7 +30,9 @@ const config = {
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      ssl: { rejectUnauthorized: false }
+      ssl: { rejectUnauthorized: false },
+      // Force IPv4 connection
+      family: 4
     },
     migrations: {
       directory: './migrations'
