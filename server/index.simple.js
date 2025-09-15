@@ -104,6 +104,36 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
+// Simple login route without database
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Simple validation
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Thiếu thông tin bắt buộc' });
+    }
+    
+    // Mock user login (without database)
+    const user = {
+      id: Math.random().toString(36).substr(2, 9),
+      username: 'testuser',
+      email,
+      telegram_linked: false,
+      notifications_enabled: true
+    };
+    
+    res.json({
+      message: 'Đăng nhập thành công (mock)',
+      user,
+      token: 'mock-jwt-token'
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi server khi đăng nhập' });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint không tồn tại' });
