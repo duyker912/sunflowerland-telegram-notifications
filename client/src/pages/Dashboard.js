@@ -53,11 +53,11 @@ const Dashboard = () => {
 
   const getCropStatus = (crop) => {
     const now = new Date();
-    const harvestTime = new Date(crop.harvest_ready_at);
+    const harvestTime = new Date(crop.harvest_time);
     
-    if (crop.is_harvested) {
+    if (crop.status === 'harvested') {
       return { status: 'harvested', text: 'Đã thu hoạch', color: 'text-gray-500' };
-    } else if (harvestTime <= now) {
+    } else if (crop.status === 'ready' || harvestTime <= now) {
       return { status: 'ready', text: 'Sẵn sàng thu hoạch', color: 'text-green-600' };
     } else {
       return { status: 'growing', text: 'Đang phát triển', color: 'text-yellow-600' };
@@ -81,14 +81,14 @@ const Dashboard = () => {
     }
   };
 
-  const readyToHarvest = cropsData?.crops?.filter(crop => {
+  const readyToHarvest = cropsData?.userCrops?.filter(crop => {
     const now = new Date();
-    const harvestTime = new Date(crop.harvest_ready_at);
-    return !crop.is_harvested && harvestTime <= now;
+    const harvestTime = new Date(crop.harvest_time);
+    return crop.status === 'ready' && harvestTime <= now;
   }) || [];
 
-  const totalCrops = cropsData?.crops?.length || 0;
-  const harvestedCrops = cropsData?.crops?.filter(crop => crop.is_harvested).length || 0;
+  const totalCrops = cropsData?.userCrops?.length || 0;
+  const harvestedCrops = cropsData?.userCrops?.filter(crop => crop.status === 'harvested').length || 0;
 
   if (isLoading) {
     return (
@@ -183,8 +183,8 @@ const Dashboard = () => {
               <div key={crop.id} className="bg-white rounded-lg p-4 border border-green-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium text-gray-900">{crop.name}</h4>
-                    <p className="text-sm text-gray-600">Số lượng: {crop.quantity}</p>
+                    <h4 className="font-medium text-gray-900">{crop.crop_name}</h4>
+                    <p className="text-sm text-gray-600">Trồng lúc: {new Date(crop.planted_at).toLocaleString('vi-VN')}</p>
                   </div>
                   <CheckCircle className="w-6 h-6 text-green-500" />
                 </div>
@@ -215,7 +215,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {cropsData?.crops?.map((crop) => {
+            {cropsData?.userCrops?.map((crop) => {
               const status = getCropStatus(crop);
               return (
                 <div key={crop.id} className="crop-card">
@@ -225,9 +225,9 @@ const Dashboard = () => {
                         <Sun className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{crop.name}</h3>
+                        <h3 className="font-semibold text-gray-900">{crop.crop_name}</h3>
                         <p className="text-sm text-gray-600">
-                          Số lượng: {crop.quantity} • Trồng lúc: {new Date(crop.planted_at).toLocaleString('vi-VN')}
+                          Trồng lúc: {new Date(crop.planted_at).toLocaleString('vi-VN')}
                         </p>
                       </div>
                     </div>
@@ -239,7 +239,7 @@ const Dashboard = () => {
                       {status.status === 'growing' && (
                         <div className="text-sm text-gray-500 flex items-center space-x-1">
                           <Clock className="w-4 h-4" />
-                          <span>{getTimeRemaining(crop.harvest_ready_at)}</span>
+                          <span>{getTimeRemaining(crop.harvest_time)}</span>
                         </div>
                       )}
                     </div>
