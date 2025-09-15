@@ -23,7 +23,7 @@ Sunflower Land sử dụng **JWT Token** thay vì API key truyền thống để
 
 ### Bước 3: Lấy JWT Token từ Game
 
-#### Cách 1: Sử dụng Browser Developer Tools
+#### Cách 1: Sử dụng Browser Developer Tools (Desktop)
 
 1. **Mở game** trong trình duyệt: [https://sunflowerland.io](https://sunflowerland.io)
 2. **Nhấn F12** để mở Developer Tools
@@ -44,13 +44,47 @@ const cookies = document.cookie;
 console.log('Cookies:', cookies);
 ```
 
-#### Cách 2: Sử dụng Network Tab
+#### Cách 1b: Sử dụng Chrome Android (Mobile)
+
+1. **Mở Chrome** trên Android
+2. **Truy cập game**: [https://sunflowerland.io](https://sunflowerland.io)
+3. **Đăng nhập** và chơi một chút
+4. **Bật Developer Tools**:
+   - **Nhấn** vào thanh địa chỉ
+   - **Gõ**: `chrome://inspect`
+   - **Nhấn Enter**
+5. **Kết nối** với máy tính qua USB hoặc WiFi
+6. **Mở Console** từ máy tính
+7. **Gõ lệnh** tương tự như trên
+
+**Hoặc sử dụng Chrome Remote Debugging:**
+
+1. **Trên máy tính**, mở Chrome
+2. **Gõ**: `chrome://inspect/#devices`
+3. **Kết nối** điện thoại qua USB
+4. **Bật USB Debugging** trên điện thoại
+5. **Chọn** tab của Sunflower Land
+6. **Mở Console** và gõ lệnh
+
+#### Cách 2: Sử dụng Network Tab (Desktop)
 
 1. **Mở Developer Tools** (F12)
 2. **Chuyển sang tab Network**
 3. **Refresh trang** game
 4. **Tìm request** có chứa JWT token trong headers
 5. **Copy token** từ Authorization header
+
+#### Cách 2b: Sử dụng Network Tab (Chrome Android)
+
+1. **Mở Chrome** trên Android
+2. **Truy cập game**: [https://sunflowerland.io](https://sunflowerland.io)
+3. **Kết nối** với máy tính qua USB
+4. **Trên máy tính**, mở `chrome://inspect/#devices`
+5. **Chọn** tab của Sunflower Land
+6. **Mở Network tab** từ máy tính
+7. **Refresh** game trên điện thoại
+8. **Tìm request** có chứa JWT token
+9. **Copy token** từ Authorization header
 
 #### Cách 3: Sử dụng Portal URL
 
@@ -61,6 +95,31 @@ console.log('Cookies:', cookies);
    https://your-portal.sunflower-land.com/?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
 4. **Copy JWT token** từ URL parameter
+
+#### Cách 4: Sử dụng Chrome Android (Không cần máy tính)
+
+**Phương pháp đơn giản nhất cho mobile:**
+
+1. **Mở Chrome** trên Android
+2. **Truy cập game**: [https://sunflowerland.io](https://sunflowerland.io)
+3. **Đăng nhập** và chơi một chút
+4. **Nhấn** vào thanh địa chỉ
+5. **Gõ**: `javascript:console.log('JWT:', localStorage.getItem('jwt'));`
+6. **Nhấn Enter**
+7. **Xem kết quả** trong console
+8. **Copy JWT token** từ kết quả
+
+**Hoặc sử dụng Bookmark:**
+
+1. **Tạo bookmark** mới trong Chrome
+2. **Đặt tên**: `Get JWT Token`
+3. **Đặt URL**:
+   ```javascript
+   javascript:(function(){const jwt=localStorage.getItem('jwt');if(jwt){prompt('JWT Token:',jwt);}else{alert('JWT token not found');}})();
+   ```
+4. **Lưu bookmark**
+5. **Truy cập game** và **nhấn bookmark**
+6. **Copy JWT token** từ popup
 
 ### Bước 4: Cấu hình Environment Variables
 
@@ -265,7 +324,7 @@ const { data: cropsData } = useQuery(
 
 ## 📝 Ví dụ thực tế
 
-### Ví dụ 1: Lấy JWT Token từ Console
+### Ví dụ 1: Lấy JWT Token từ Console (Desktop)
 
 ```javascript
 // Mở game trong trình duyệt
@@ -282,6 +341,39 @@ console.log('Player ID:', playerId);
 
 // Copy kết quả và sử dụng
 ```
+
+### Ví dụ 1b: Lấy JWT Token từ Chrome Android (Mobile)
+
+**Cách 1: Sử dụng JavaScript URL**
+```
+javascript:console.log('JWT:', localStorage.getItem('jwt'));
+```
+
+**Cách 2: Sử dụng Bookmark**
+```javascript
+javascript:(function(){
+  const jwt = localStorage.getItem('jwt');
+  const playerId = window.gameState?.playerId || localStorage.getItem('playerId');
+  
+  if (jwt) {
+    prompt('JWT Token:', jwt);
+  } else {
+    alert('JWT token not found');
+  }
+  
+  if (playerId) {
+    prompt('Player ID:', playerId);
+  } else {
+    alert('Player ID not found');
+  }
+})();
+```
+
+**Cách 3: Sử dụng Chrome Remote Debugging**
+1. **Kết nối** điện thoại với máy tính qua USB
+2. **Mở** `chrome://inspect/#devices` trên máy tính
+3. **Chọn** tab của Sunflower Land
+4. **Mở Console** và gõ lệnh như desktop
 
 ### Ví dụ 2: Test API với PowerShell
 
