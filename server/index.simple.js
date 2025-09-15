@@ -134,6 +134,90 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Get current user info
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const user = {
+      id: 'mock-user-id',
+      username: 'testuser',
+      email: 'test@example.com',
+      telegram_linked: false,
+      notifications_enabled: true,
+      notification_settings: {
+        harvest_reminder: true,
+        daily_summary: true,
+        crop_ready: true
+      },
+      last_login: new Date().toISOString()
+    };
+    
+    res.json({ user });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi server khi lấy thông tin người dùng' });
+  }
+});
+
+// Get notifications
+app.get('/api/notifications', async (req, res) => {
+  try {
+    const notifications = [
+      {
+        id: 1,
+        type: 'harvest_reminder',
+        title: 'Cây trồng sẵn sàng thu hoạch!',
+        message: 'Cà chua của bạn đã sẵn sàng để thu hoạch.',
+        created_at: new Date().toISOString(),
+        read: false
+      },
+      {
+        id: 2,
+        type: 'daily_summary',
+        title: 'Tóm tắt hàng ngày',
+        message: 'Bạn có 3 cây trồng cần chăm sóc hôm nay.',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        read: true
+      }
+    ];
+    
+    res.json({ notifications });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi server khi lấy thông báo' });
+  }
+});
+
+// Get user crops
+app.get('/api/crops/user-crops', async (req, res) => {
+  try {
+    const userCrops = [
+      {
+        id: 1,
+        crop_id: 1,
+        crop_name: 'Cà chua',
+        planted_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        harvest_time: new Date(Date.now() + 86400000 * 2).toISOString(),
+        status: 'growing',
+        progress: 75
+      },
+      {
+        id: 2,
+        crop_id: 2,
+        crop_name: 'Cà rốt',
+        planted_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        harvest_time: new Date(Date.now() + 86400000 * 1).toISOString(),
+        status: 'ready',
+        progress: 100
+      }
+    ];
+    
+    res.json({ userCrops });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi server khi lấy cây trồng' });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint không tồn tại' });
