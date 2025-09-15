@@ -71,6 +71,39 @@ app.get('/api/db-test', async (req, res) => {
   }
 });
 
+// Simple register route without database
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    
+    // Simple validation
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Thiếu thông tin bắt buộc' });
+    }
+    
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' });
+    }
+    
+    // Mock user creation (without database)
+    const user = {
+      id: Math.random().toString(36).substr(2, 9),
+      username,
+      email,
+      created_at: new Date().toISOString()
+    };
+    
+    res.status(201).json({
+      message: 'Đăng ký thành công (mock)',
+      user,
+      token: 'mock-jwt-token'
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi server khi đăng ký' });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint không tồn tại' });
