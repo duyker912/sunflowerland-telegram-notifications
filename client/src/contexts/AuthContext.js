@@ -27,10 +27,13 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
+      console.log('👤 Fetching user with token:', localStorage.getItem('token'));
       const response = await api.get('/auth/me');
+      console.log('✅ User fetch response:', response.data);
       setUser(response.data.user);
     } catch (error) {
-      console.error('Fetch user error:', error);
+      console.error('❌ Fetch user error:', error);
+      console.error('❌ Error response:', error.response?.data);
       logout();
     } finally {
       setLoading(false);
@@ -39,16 +42,28 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('🔐 Attempting login with:', { email, password: '***' });
       const response = await api.post('/auth/login', { email, password });
+      console.log('✅ Login response:', response.data);
+      
       const { user, token } = response.data;
+      
+      if (!user || !token) {
+        throw new Error('Invalid response format');
+      }
       
       setUser(user);
       setToken(token);
       localStorage.setItem('token', token);
       
+      console.log('✅ User set:', user);
+      console.log('✅ Token set:', token);
+      
       toast.success('Đăng nhập thành công!');
       return { success: true };
     } catch (error) {
+      console.error('❌ Login error:', error);
+      console.error('❌ Error response:', error.response?.data);
       const message = error.response?.data?.error || 'Đăng nhập thất bại';
       toast.error(message);
       return { success: false, error: message };
