@@ -320,7 +320,7 @@ class MultiChainService {
           address: tokenAddress,
           name: name,
           symbol: symbol,
-          decimals: decimals,
+          decimals: Number(decimals),
           totalSupply: ethers.formatUnits(totalSupply, decimals),
           network: network
         }
