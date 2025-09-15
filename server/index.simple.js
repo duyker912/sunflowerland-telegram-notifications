@@ -382,12 +382,32 @@ app.get('/api/auth/me', async (req, res) => {
   try {
     const db = require('./config/database');
     
-    // For now, get user ID 1 (in real app, extract from JWT token)
-    const user = await db('users').where({ id: 1 }).first();
+    // Extract user ID from token (simple implementation)
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Token không hợp lệ' });
+    }
+    
+    const token = authHeader.substring(7); // Remove 'Bearer '
+    console.log('🔍 Token received:', token);
+    
+    // Simple token parsing (in real app, use JWT library)
+    let userId;
+    if (token.startsWith('jwt-token-')) {
+      userId = parseInt(token.replace('jwt-token-', ''));
+    } else {
+      return res.status(401).json({ error: 'Token format không hợp lệ' });
+    }
+    
+    console.log('🔍 User ID from token:', userId);
+    
+    const user = await db('users').where({ id: userId }).first();
     
     if (!user) {
       return res.status(404).json({ error: 'User không tồn tại' });
     }
+    
+    console.log('✅ User found:', user.username, user.email);
     
     res.json({ 
       user: {
