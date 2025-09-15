@@ -225,7 +225,7 @@ app.post('/api/run-migrations', async (req, res) => {
   }
 });
 
-// Simple register route without database
+// Register route with database
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -239,26 +239,45 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' });
     }
     
-    // Mock user creation (without database)
-    const user = {
-      id: Math.random().toString(36).substr(2, 9),
+    const db = require('./config/database');
+    const bcrypt = require('bcryptjs');
+    
+    // Check if email already exists
+    const existingUser = await db('users').where({ email }).first();
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email đã được sử dụng' });
+    }
+    
+    // Check if username already exists
+    const existingUsername = await db('users').where({ username }).first();
+    if (existingUsername) {
+      return res.status(400).json({ error: 'Tên người dùng đã được sử dụng' });
+    }
+    
+    // Hash password
+    const saltRounds = 12;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    
+    // Create user
+    const [user] = await db('users').insert({
       username,
       email,
-      created_at: new Date().toISOString()
-    };
+      password_hash: passwordHash
+    }).returning(['id', 'username', 'email', 'created_at']);
     
     res.status(201).json({
-      message: 'Đăng ký thành công (mock)',
+      message: 'Đăng ký thành công',
       user,
-      token: 'mock-jwt-token'
+      token: 'jwt-token-' + user.id
     });
     
   } catch (error) {
+    console.error('Register error:', error);
     res.status(500).json({ error: 'Lỗi server khi đăng ký' });
   }
 });
 
-// Simple login route without database
+// Login route with database
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -268,22 +287,40 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Thiếu thông tin bắt buộc' });
     }
     
-    // Mock user login (without database)
-    const user = {
-      id: Math.random().toString(36).substr(2, 9),
-      username: 'testuser',
-      email,
-      telegram_linked: false,
-      notifications_enabled: true
-    };
+    const db = require('./config/database');
+    const bcrypt = require('bcryptjs');
+    
+    // Find user
+    const user = await db('users').where({ email }).first();
+    if (!user) {
+      return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng' });
+    }
+    
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng' });
+    }
+    
+    // Update last login
+    await db('users').where({ id: user.id }).update({
+      last_login: db.fn.now()
+    });
     
     res.json({
-      message: 'Đăng nhập thành công (mock)',
-      user,
-      token: 'mock-jwt-token'
+      message: 'Đăng nhập thành công',
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        telegram_linked: user.telegram_linked,
+        notifications_enabled: user.notifications_enabled
+      },
+      token: 'jwt-token-' + user.id
     });
     
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Lỗi server khi đăng nhập' });
   }
 });
@@ -291,8 +328,9 @@ app.post('/api/auth/login', async (req, res) => {
 // Get current user info
 app.get('/api/auth/me', async (req, res) => {
   try {
+    // For now, return mock data - in real app, extract user from JWT token
     const user = {
-      id: 'mock-user-id',
+      id: 1,
       username: 'testuser',
       email: 'test@example.com',
       telegram_linked: false,
@@ -321,8 +359,29 @@ app.post('/api/auth/telegram', async (req, res) => {
       return res.status(400).json({ error: 'Thiếu telegram_chat_id' });
     }
     
-    // Mock telegram linking (without database)
-    console.log(`🔗 Linking Telegram: ${telegram_username} (${telegram_chat_id})`);
+    const db = require('./config/database');
+    
+    // For now, update user ID 1 (in real app, get from JWT token)
+    const userId = 1;
+    
+    // Check if telegram_chat_id already used by another user
+    const existingTelegram = await db('users')
+      .where({ telegram_chat_id })
+      .where('id', '!=', userId)
+      .first();
+    
+    if (existingTelegram) {
+      return res.status(400).json({ error: 'Tài khoản Telegram này đã được liên kết' });
+    }
+    
+    // Update user's telegram info
+    await db('users').where({ id: userId }).update({
+      telegram_chat_id,
+      telegram_username,
+      telegram_linked: true
+    });
+    
+    console.log(`🔗 Linking Telegram: ${telegram_username} (${telegram_chat_id}) for user ${userId}`);
     
     // Send welcome message to Telegram
     const welcomeMessage = `🎉 Chúc mừng! Tài khoản đã được liên kết thành công!
@@ -352,8 +411,19 @@ app.post('/api/auth/telegram', async (req, res) => {
 // Unlink Telegram account
 app.delete('/api/auth/telegram', async (req, res) => {
   try {
-    // Mock telegram unlinking (without database)
-    console.log('🔓 Unlinking Telegram account');
+    const db = require('./config/database');
+    
+    // For now, update user ID 1 (in real app, get from JWT token)
+    const userId = 1;
+    
+    // Update user's telegram info
+    await db('users').where({ id: userId }).update({
+      telegram_chat_id: null,
+      telegram_username: null,
+      telegram_linked: false
+    });
+    
+    console.log('🔓 Unlinking Telegram account for user', userId);
     
     res.json({
       message: 'Hủy liên kết Telegram thành công',
@@ -369,28 +439,20 @@ app.delete('/api/auth/telegram', async (req, res) => {
 // Get notifications
 app.get('/api/notifications', async (req, res) => {
   try {
-    const notifications = [
-      {
-        id: 1,
-        type: 'harvest_reminder',
-        title: 'Cây trồng sẵn sàng thu hoạch!',
-        message: 'Cà chua của bạn đã sẵn sàng để thu hoạch.',
-        created_at: new Date().toISOString(),
-        read: false
-      },
-      {
-        id: 2,
-        type: 'daily_summary',
-        title: 'Tóm tắt hàng ngày',
-        message: 'Bạn có 3 cây trồng cần chăm sóc hôm nay.',
-        created_at: new Date(Date.now() - 86400000).toISOString(),
-        read: true
-      }
-    ];
+    const db = require('./config/database');
+    
+    // For now, get notifications for user ID 1 (in real app, get from JWT token)
+    const userId = 1;
+    
+    const notifications = await db('notifications')
+      .where({ user_id: userId })
+      .orderBy('created_at', 'desc')
+      .limit(20);
     
     res.json({ notifications });
     
   } catch (error) {
+    console.error('Get notifications error:', error);
     res.status(500).json({ error: 'Lỗi server khi lấy thông báo' });
   }
 });
@@ -398,30 +460,29 @@ app.get('/api/notifications', async (req, res) => {
 // Get user crops
 app.get('/api/crops/user-crops', async (req, res) => {
   try {
-    const userCrops = [
-      {
-        id: 1,
-        crop_id: 1,
-        crop_name: 'Cà chua',
-        planted_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-        harvest_time: new Date(Date.now() + 86400000 * 2).toISOString(),
-        status: 'growing',
-        progress: 75
-      },
-      {
-        id: 2,
-        crop_id: 2,
-        crop_name: 'Cà rốt',
-        planted_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-        harvest_time: new Date(Date.now() + 86400000 * 1).toISOString(),
-        status: 'ready',
-        progress: 100
-      }
-    ];
+    const db = require('./config/database');
+    
+    // For now, get crops for user ID 1 (in real app, get from JWT token)
+    const userId = 1;
+    
+    const userCrops = await db('user_crops')
+      .join('crops', 'user_crops.crop_id', 'crops.id')
+      .where('user_crops.user_id', userId)
+      .select(
+        'user_crops.id',
+        'user_crops.crop_id',
+        'crops.name as crop_name',
+        'user_crops.planted_at',
+        'user_crops.harvest_time',
+        'user_crops.status',
+        'user_crops.progress'
+      )
+      .orderBy('user_crops.planted_at', 'desc');
     
     res.json({ userCrops });
     
   } catch (error) {
+    console.error('Get user crops error:', error);
     res.status(500).json({ error: 'Lỗi server khi lấy cây trồng' });
   }
 });
