@@ -158,6 +158,60 @@ app.get('/api/auth/me', async (req, res) => {
   }
 });
 
+// Link Telegram account
+app.post('/api/auth/telegram', async (req, res) => {
+  try {
+    const { telegram_chat_id, telegram_username } = req.body;
+    
+    if (!telegram_chat_id) {
+      return res.status(400).json({ error: 'Thiếu telegram_chat_id' });
+    }
+    
+    // Mock telegram linking (without database)
+    console.log(`🔗 Linking Telegram: ${telegram_username} (${telegram_chat_id})`);
+    
+    // Send welcome message to Telegram
+    const welcomeMessage = `🎉 Chúc mừng! Tài khoản đã được liên kết thành công!
+
+🌻 Sunflower Land Bot đã sẵn sàng:
+• Nhận thông báo thu hoạch
+• Tóm tắt hàng ngày
+• Cập nhật trạng thái cây trồng
+
+📋 Sử dụng /status để xem trạng thái cây trồng hiện tại.`;
+    
+    await sendTelegramMessage(telegram_chat_id, welcomeMessage);
+    
+    res.json({
+      message: 'Liên kết Telegram thành công',
+      telegram_linked: true,
+      telegram_chat_id,
+      telegram_username
+    });
+    
+  } catch (error) {
+    console.error('Telegram link error:', error);
+    res.status(500).json({ error: 'Lỗi server khi liên kết Telegram' });
+  }
+});
+
+// Unlink Telegram account
+app.delete('/api/auth/telegram', async (req, res) => {
+  try {
+    // Mock telegram unlinking (without database)
+    console.log('🔓 Unlinking Telegram account');
+    
+    res.json({
+      message: 'Hủy liên kết Telegram thành công',
+      telegram_linked: false
+    });
+    
+  } catch (error) {
+    console.error('Telegram unlink error:', error);
+    res.status(500).json({ error: 'Lỗi server khi hủy liên kết Telegram' });
+  }
+});
+
 // Get notifications
 app.get('/api/notifications', async (req, res) => {
   try {
