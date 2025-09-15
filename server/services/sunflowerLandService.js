@@ -31,7 +31,7 @@ class SunflowerLandService {
       await this.rateLimit();
       
       // Sử dụng API thật của Sunflower Land
-      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
+      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ class SunflowerLandService {
       await this.rateLimit();
       
       // Sử dụng API thật của Sunflower Land
-      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
+      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -113,7 +113,7 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
+      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
-      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
+      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
@@ -236,7 +236,7 @@ class SunflowerLandService {
       await this.rateLimit();
       
       // Test với API thật của Sunflower Land
-      const response = await axios.get(`${this.baseURL}/portal/telegram-bot/player`, {
+      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
