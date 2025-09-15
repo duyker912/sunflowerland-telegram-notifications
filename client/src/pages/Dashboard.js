@@ -321,7 +321,33 @@ const Dashboard = () => {
       )}
 
       {activeTab === 'blockchain' && (
-        <BlockchainDashboard />
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              🌐 Blockchain Dashboard
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Tích hợp blockchain cho Sunflower Land
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-900">Base Network</h3>
+                <p className="text-blue-700">✅ Connected</p>
+                <p className="text-sm text-blue-600">Chain ID: 8453</p>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-purple-900">Polygon Network</h3>
+                <p className="text-purple-700">✅ Connected</p>
+                <p className="text-sm text-purple-600">Chain ID: 137</p>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+              <h3 className="font-semibold text-yellow-900">FLOWER Token</h3>
+              <p className="text-yellow-700">Address: 0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380</p>
+              <p className="text-sm text-yellow-600">Total Supply: 21,000,000 FLOWER</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
