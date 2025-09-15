@@ -59,6 +59,16 @@ app.get('/api/check-schema', async (req, res) => {
   }
 });
 
+// Test blockchain endpoint
+app.get('/api/blockchain/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Blockchain endpoint is working!',
+    timestamp: new Date().toISOString(),
+    networks: ['base', 'polygon']
+  });
+});
+
 // Test notification service
 app.post('/api/test-notification', async (req, res) => {
   try {
