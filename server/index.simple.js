@@ -106,6 +106,39 @@ app.get('/api/migrate-test', async (req, res) => {
   }
 });
 
+// Check database tables
+app.get('/api/check-tables', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    
+    // Get all tables
+    const tables = await db.raw(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+      ORDER BY table_name
+    `);
+    
+    // Check if our tables exist
+    const tableNames = tables.rows.map(row => row.table_name);
+    const expectedTables = ['users', 'crops', 'user_crops', 'notifications'];
+    const missingTables = expectedTables.filter(table => !tableNames.includes(table));
+    
+    res.json({ 
+      message: 'Database tables check',
+      all_tables: tableNames,
+      expected_tables: expectedTables,
+      missing_tables: missingTables,
+      migrations_needed: missingTables.length > 0
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to check tables', 
+      message: error.message
+    });
+  }
+});
+
 // Simple register route without database
 app.post('/api/auth/register', async (req, res) => {
   try {
