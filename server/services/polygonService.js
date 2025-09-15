@@ -15,11 +15,11 @@ class MultiChainService {
     try {
       // Polygon Mainnet
       const polygonRpcUrl = process.env.POLYGON_RPC_URL || 'https://polygon-rpc.com';
-      this.providers.polygon = new ethers.providers.JsonRpcProvider(polygonRpcUrl);
+      this.providers.polygon = new ethers.JsonRpcProvider(polygonRpcUrl);
       
       // Base Mainnet
       const baseRpcUrl = process.env.BASE_RPC_URL || 'https://mainnet.base.org';
-      this.providers.base = new ethers.providers.JsonRpcProvider(baseRpcUrl);
+      this.providers.base = new ethers.JsonRpcProvider(baseRpcUrl);
       
       console.log('🌐 Connected to multiple networks: Polygon, Base');
     } catch (error) {
@@ -321,7 +321,7 @@ class MultiChainService {
           name: name,
           symbol: symbol,
           decimals: decimals,
-          totalSupply: ethers.utils.formatUnits(totalSupply, decimals),
+          totalSupply: ethers.formatUnits(totalSupply, decimals),
           network: network
         }
       };
@@ -355,7 +355,7 @@ class MultiChainService {
           network: networkInfo.name,
           chainId: networkInfo.chainId.toString(),
           blockNumber: blockNumber,
-          gasPrice: ethers.utils.formatUnits(gasPrice, 'gwei') + ' gwei',
+          gasPrice: ethers.formatUnits(gasPrice, 'gwei') + ' gwei',
           connected: true
         }
       };
