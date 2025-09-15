@@ -47,7 +47,7 @@ CORS_ORIGIN=https://your-vercel-app.vercel.app
 3. Chọn thư mục `client/`
 4. **Environment Variables** → Thêm:
 ```env
-REACT_APP_API_URL=https://your-railway-app.railway.app/api
+REACT_APP_API_URL=https://sunflowerland-telegram-notifications-production.up.railway.app/api
 ```
 5. **Deploy** → Lưu URL (dạng: `https://your-app.vercel.app`)
 
@@ -56,17 +56,17 @@ REACT_APP_API_URL=https://your-railway-app.railway.app/api
 2. Chạy script:
 ```bash
 # Windows
-deploy-scripts\telegram-setup.bat YOUR_BOT_TOKEN https://your-railway-app.railway.app
+deploy-scripts\telegram-setup.bat YOUR_BOT_TOKEN https://sunflowerland-telegram-notifications-production.up.railway.app
 
 # Linux/Mac
-./deploy-scripts/telegram-setup.sh YOUR_BOT_TOKEN https://your-railway-app.railway.app
+./deploy-scripts/telegram-setup.sh YOUR_BOT_TOKEN https://sunflowerland-telegram-notifications-production.up.railway.app
 ```
 
 ## 🎉 Hoàn thành!
 
 Bây giờ bạn có:
 - 🌐 **Website**: https://your-app.vercel.app
-- 🔗 **API**: https://your-app.railway.app
+- 🔗 **API**: https://sunflowerland-telegram-notifications-production.up.railway.app
 - 🤖 **Telegram Bot**: @your_bot_username
 - 🗄️ **Database**: Supabase dashboard
 

@@ -7,13 +7,13 @@ set RAILWAY_URL=%2
 
 if "%BOT_TOKEN%"=="" (
     echo ❌ Sử dụng: telegram-setup.bat YOUR_BOT_TOKEN YOUR_RAILWAY_URL
-    echo Ví dụ: telegram-setup.bat 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://your-app.railway.app
+    echo Ví dụ: telegram-setup.bat 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://sunflowerland-telegram-notifications-production.up.railway.app
     exit /b 1
 )
 
 if "%RAILWAY_URL%"=="" (
     echo ❌ Sử dụng: telegram-setup.bat YOUR_BOT_TOKEN YOUR_RAILWAY_URL
-    echo Ví dụ: telegram-setup.bat 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://your-app.railway.app
+    echo Ví dụ: telegram-setup.bat 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://sunflowerland-telegram-notifications-production.up.railway.app
     exit /b 1
 )
 

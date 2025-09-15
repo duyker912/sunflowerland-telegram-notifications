@@ -205,7 +205,7 @@ JWT_EXPIRES_IN=7d
 
 # Telegram Bot
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
-TELEGRAM_WEBHOOK_URL=https://your-railway-app.railway.app/api/telegram/webhook
+TELEGRAM_WEBHOOK_URL=https://sunflowerland-telegram-notifications-production.up.railway.app/api/telegram/webhook
 
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
@@ -251,7 +251,7 @@ CORS_ORIGIN=https://your-vercel-app.vercel.app
 
 2. Tạo file `.env.production` trong thư mục `client/`:
 ```env
-REACT_APP_API_URL=https://your-railway-app.railway.app/api
+REACT_APP_API_URL=https://sunflowerland-telegram-notifications-production.up.railway.app/api
 ```
 
 ### 3.2 Deploy lên Vercel
@@ -272,7 +272,7 @@ REACT_APP_API_URL=https://your-railway-app.railway.app/api
 2. Click **Settings** → **Environment Variables**
 3. Thêm:
 ```env
-REACT_APP_API_URL=https://your-railway-app.railway.app/api
+REACT_APP_API_URL=https://sunflowerland-telegram-notifications-production.up.railway.app/api
 ```
 
 ## 🔗 Bước 4: Cấu hình Telegram Webhook
@@ -282,7 +282,7 @@ REACT_APP_API_URL=https://your-railway-app.railway.app/api
 # Thay YOUR_BOT_TOKEN và YOUR_RAILWAY_URL
 curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://your-railway-app.railway.app/api/telegram/webhook"}'
+  -d '{"url": "https://sunflowerland-telegram-notifications-production.up.railway.app/api/telegram/webhook"}'
 ```
 
 ### 4.2 Kiểm tra Webhook
@@ -295,10 +295,10 @@ curl "https://api.telegram.org/botYOUR_BOT_TOKEN/getWebhookInfo"
 ### 5.1 Test Backend
 ```bash
 # Health check
-curl https://your-railway-app.railway.app/health
+curl https://sunflowerland-telegram-notifications-production.up.railway.app/health
 
 # Test API
-curl https://your-railway-app.railway.app/api/crops
+curl https://sunflowerland-telegram-notifications-production.up.railway.app/api/crops
 ```
 
 ### 5.2 Test Frontend
@@ -384,7 +384,7 @@ curl -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/deleteWebhook"
 
 Sau khi deploy thành công, bạn sẽ có:
 - 🌐 **Website**: https://your-app.vercel.app
-- 🔗 **API**: https://your-app.railway.app
+- 🔗 **API**: https://sunflowerland-telegram-notifications-production.up.railway.app
 - 🤖 **Telegram Bot**: @your_bot_username
 - 🗄️ **Database**: Supabase dashboard
 

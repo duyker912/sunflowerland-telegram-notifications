@@ -8,7 +8,7 @@ RAILWAY_URL=$2
 
 if [ -z "$BOT_TOKEN" ] || [ -z "$RAILWAY_URL" ]; then
     echo "❌ Sử dụng: ./telegram-setup.sh YOUR_BOT_TOKEN YOUR_RAILWAY_URL"
-    echo "Ví dụ: ./telegram-setup.sh 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://your-app.railway.app"
+    echo "Ví dụ: ./telegram-setup.sh 123456789:ABCdefGHIjklMNOpqrsTUVwxyz https://sunflowerland-telegram-notifications-production.up.railway.app"
     exit 1
 fi
 
