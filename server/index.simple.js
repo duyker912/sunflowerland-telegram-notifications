@@ -139,6 +139,58 @@ app.get('/api/check-tables', async (req, res) => {
   }
 });
 
+// Create admin user
+app.post('/api/create-admin', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    const bcrypt = require('bcryptjs');
+    
+    // Check if admin exists
+    const existingAdmin = await db('users').where({ email: 'admin@admin.vn' }).first();
+    if (existingAdmin) {
+      return res.json({ 
+        message: 'Admin user already exists',
+        user: {
+          id: existingAdmin.id,
+          username: existingAdmin.username,
+          email: existingAdmin.email
+        }
+      });
+    }
+    
+    // Create admin user
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const [adminId] = await db('users').insert({
+      username: 'admin',
+      email: 'admin@admin.vn',
+      password_hash: hashedPassword,
+      telegram_linked: false,
+      notifications_enabled: true,
+      notification_settings: {
+        harvest_reminder: true,
+        daily_summary: true,
+        crop_ready: true
+      }
+    }).returning('id');
+    
+    res.json({
+      message: 'Admin user created successfully',
+      user: {
+        id: adminId,
+        username: 'admin',
+        email: 'admin@admin.vn'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Create admin error:', error);
+    res.status(500).json({ 
+      error: 'Failed to create admin user', 
+      message: error.message 
+    });
+  }
+});
+
 // Run migrations manually
 app.post('/api/run-migrations', async (req, res) => {
   try {
@@ -328,24 +380,33 @@ app.post('/api/auth/login', async (req, res) => {
 // Get current user info
 app.get('/api/auth/me', async (req, res) => {
   try {
-    // For now, return mock data - in real app, extract user from JWT token
-    const user = {
-      id: 1,
-      username: 'testuser',
-      email: 'test@example.com',
-      telegram_linked: false,
-      notifications_enabled: true,
-      notification_settings: {
-        harvest_reminder: true,
-        daily_summary: true,
-        crop_ready: true
-      },
-      last_login: new Date().toISOString()
-    };
+    const db = require('./config/database');
     
-    res.json({ user });
+    // For now, get user ID 1 (in real app, extract from JWT token)
+    const user = await db('users').where({ id: 1 }).first();
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User không tồn tại' });
+    }
+    
+    res.json({ 
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        telegram_linked: user.telegram_linked,
+        notifications_enabled: user.notifications_enabled,
+        notification_settings: user.notification_settings || {
+          harvest_reminder: true,
+          daily_summary: true,
+          crop_ready: true
+        },
+        last_login: user.last_login
+      }
+    });
     
   } catch (error) {
+    console.error('Get user error:', error);
     res.status(500).json({ error: 'Lỗi server khi lấy thông tin người dùng' });
   }
 });
