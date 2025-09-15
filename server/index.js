@@ -40,7 +40,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/crops', require('./routes/crops'));
 app.use('/api/telegram', require('./routes/telegram').router);
-app.use('/api/polygon', require('./routes/polygon'));
+// app.use('/api/polygon', require('./routes/polygon')); // Temporarily disabled
 app.use('/api/blockchain', require('./routes/blockchain'));
 
 // Check database schema
