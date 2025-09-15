@@ -130,8 +130,7 @@ class NotificationService {
       // Lấy crops sẵn sàng thu hoạch
       const readyCrops = await db('user_crops')
         .where('harvest_time', '<=', new Date())
-        .where('status', '!=', 'harvested')
-        .where('notification_sent', false);
+        .where('status', '!=', 'harvested');
 
       console.log(`Found ${readyCrops.length} crops ready for harvest`);
 
@@ -140,10 +139,10 @@ class NotificationService {
         const result = await this.sendHarvestNotification(crop.user_id, crop);
         
         if (result.success) {
-          // Đánh dấu đã gửi thông báo
+          // Đánh dấu đã gửi thông báo bằng cách cập nhật status
           await db('user_crops')
             .where({ id: crop.id })
-            .update({ notification_sent: true });
+            .update({ status: 'notified' });
           
           console.log(`✅ Sent harvest notification for crop ${crop.id}`);
         } else {
