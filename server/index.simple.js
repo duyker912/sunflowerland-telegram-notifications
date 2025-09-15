@@ -218,6 +218,133 @@ app.get('/api/crops/user-crops', async (req, res) => {
   }
 });
 
+// Telegram Bot Webhook
+app.post('/api/telegram/webhook', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'No message received' });
+    }
+    
+    const chatId = message.chat.id;
+    const text = message.text;
+    const username = message.from.username || message.from.first_name;
+    
+    console.log(`📱 Telegram message from ${username} (${chatId}): ${text}`);
+    
+    // Handle different commands
+    if (text === '/start') {
+      const welcomeMessage = `🌻 Chào mừng ${username} đến với Sunflower Land Bot!
+
+🤖 Bot này sẽ giúp bạn:
+• Nhận thông báo khi cây trồng sẵn sàng thu hoạch
+• Tóm tắt hàng ngày về cây trồng
+• Cập nhật trạng thái cây trồng
+
+📋 Các lệnh có sẵn:
+/start - Bắt đầu
+/help - Trợ giúp
+/status - Xem trạng thái cây trồng
+/chatid - Lấy Chat ID để liên kết
+
+💡 Để sử dụng đầy đủ tính năng, hãy liên kết tài khoản trên website!`;
+      
+      await sendTelegramMessage(chatId, welcomeMessage);
+    }
+    else if (text === '/help') {
+      const helpMessage = `🆘 Trợ giúp Sunflower Land Bot:
+
+📋 Các lệnh:
+/start - Bắt đầu bot
+/help - Hiển thị trợ giúp này
+/status - Xem trạng thái cây trồng
+/chatid - Lấy Chat ID để liên kết
+
+🔗 Liên kết tài khoản:
+1. Vào website: http://localhost:3000
+2. Đăng nhập tài khoản
+3. Vào Settings → Telegram
+4. Nhập Chat ID: ${chatId}
+5. Nhấn "Liên kết"
+
+🌱 Sau khi liên kết, bạn sẽ nhận được:
+• Thông báo thu hoạch
+• Tóm tắt hàng ngày
+• Cập nhật trạng thái cây trồng`;
+      
+      await sendTelegramMessage(chatId, helpMessage);
+    }
+    else if (text === '/status') {
+      const statusMessage = `🌱 Trạng thái cây trồng:
+
+🍅 Cà chua: 75% (2 ngày nữa)
+🥕 Cà rốt: 100% (Sẵn sàng thu hoạch!)
+
+📊 Tổng cộng: 2 cây trồng
+⏰ Cập nhật lần cuối: ${new Date().toLocaleString('vi-VN')}`;
+      
+      await sendTelegramMessage(chatId, statusMessage);
+    }
+    else if (text === '/chatid') {
+      const chatIdMessage = `🆔 Chat ID của bạn: ${chatId}
+
+📋 Để liên kết tài khoản:
+1. Vào website: http://localhost:3000
+2. Đăng nhập tài khoản
+3. Vào Settings → Telegram
+4. Nhập Chat ID: ${chatId}
+5. Nhấn "Liên kết"
+
+✅ Sau khi liên kết, bạn sẽ nhận được thông báo tự động!`;
+      
+      await sendTelegramMessage(chatId, chatIdMessage);
+    }
+    else {
+      const unknownMessage = `❓ Lệnh không được nhận diện: ${text}
+
+📋 Sử dụng /help để xem danh sách lệnh có sẵn.`;
+      
+      await sendTelegramMessage(chatId, unknownMessage);
+    }
+    
+    res.json({ status: 'success' });
+    
+  } catch (error) {
+    console.error('Telegram webhook error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+// Function to send Telegram message
+async function sendTelegramMessage(chatId, text) {
+  try {
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN || '7114824299:AAFPcvGp_PC0XJ4Kxk_phOJpSEViNf3T9bQ';
+    const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
+    
+    const response = await fetch(telegramUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML'
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Telegram API error: ${response.status}`);
+    }
+    
+    console.log(`✅ Telegram message sent to ${chatId}`);
+    
+  } catch (error) {
+    console.error('Failed to send Telegram message:', error);
+  }
+}
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint không tồn tại' });
