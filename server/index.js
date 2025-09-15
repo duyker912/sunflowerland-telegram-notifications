@@ -35,7 +35,7 @@ app.use('/api/', limiter);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/crops', require('./routes/crops'));
-app.use('/api/telegram', require('./routes/telegram'));
+app.use('/api/telegram', require('./routes/telegram').router);
 
 // Health check
 app.get('/health', (req, res) => {
