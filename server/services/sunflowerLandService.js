@@ -3,7 +3,7 @@ const axios = require('axios');
 class SunflowerLandService {
   constructor() {
     this.baseURL = process.env.SUNFLOWER_API_URL || 'https://api.sunflowerland.io';
-    this.apiKey = process.env.SUNFLOWER_API_KEY;
+    this.jwtToken = process.env.SUNFLOWER_JWT_TOKEN; // JWT token thay vì API key
     this.rateLimitDelay = 1000; // 1 second between requests
     this.lastRequestTime = 0;
   }
@@ -32,7 +32,7 @@ class SunflowerLandService {
       
       const response = await axios.get(`${this.baseURL}/player/${playerId}/farm`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -61,7 +61,7 @@ class SunflowerLandService {
       
       const response = await axios.get(`${this.baseURL}/player/${playerId}/crops`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -103,7 +103,7 @@ class SunflowerLandService {
       
       const response = await axios.get(`${this.baseURL}/player/${playerId}/inventory`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -132,7 +132,7 @@ class SunflowerLandService {
       
       const response = await axios.get(`${this.baseURL}/player/${playerId}`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
@@ -196,7 +196,7 @@ class SunflowerLandService {
       
       const response = await axios.get(`${this.baseURL}/crops`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Authorization': `Bearer ${this.jwtToken}`,
           'Content-Type': 'application/json'
         },
         timeout: 10000
