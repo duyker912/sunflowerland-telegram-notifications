@@ -38,16 +38,35 @@ app.get('/api/test', (req, res) => {
 // Database test route
 app.get('/api/db-test', async (req, res) => {
   try {
+    // Debug environment variables
+    const envDebug = {
+      DB_HOST: process.env.DB_HOST,
+      DB_PORT: process.env.DB_PORT,
+      DB_NAME: process.env.DB_NAME,
+      DB_USER: process.env.DB_USER,
+      DB_PASSWORD: process.env.DB_PASSWORD ? '***' : 'NOT_SET',
+      NODE_ENV: process.env.NODE_ENV
+    };
+    
     const db = require('./config/database');
     const result = await db.raw('SELECT 1 as test');
     res.json({ 
       message: 'Database connected!', 
-      result: result.rows[0] 
+      result: result.rows[0],
+      env: envDebug
     });
   } catch (error) {
     res.status(500).json({ 
       error: 'Database connection failed', 
-      message: error.message 
+      message: error.message,
+      env: {
+        DB_HOST: process.env.DB_HOST,
+        DB_PORT: process.env.DB_PORT,
+        DB_NAME: process.env.DB_NAME,
+        DB_USER: process.env.DB_USER,
+        DB_PASSWORD: process.env.DB_PASSWORD ? '***' : 'NOT_SET',
+        NODE_ENV: process.env.NODE_ENV
+      }
     });
   }
 });
