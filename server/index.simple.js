@@ -1,6 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+
+// Load environment variables
+if (process.env.NODE_ENV === 'production') {
+  require('dotenv').config({ path: './env.production' });
+} else {
+  require('dotenv').config();
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
