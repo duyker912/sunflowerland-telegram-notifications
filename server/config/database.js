@@ -25,7 +25,7 @@ const config = {
   production: {
     client: 'postgresql',
     connection: {
-      connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
+      connectionString: 'postgresql://postgres:95o7YuloH9OrpgZ6@db.fzfegspgslnglxcegdbp.supabase.co:5432/postgres?sslmode=require',
       ssl: { rejectUnauthorized: false }
     },
     migrations: {
