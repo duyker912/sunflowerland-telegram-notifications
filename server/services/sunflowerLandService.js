@@ -59,6 +59,15 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
+      // Kiểm tra JWT token
+      if (!this.jwtToken || this.jwtToken === 'your_jwt_token_here') {
+        return {
+          success: false,
+          error: 'JWT token not configured',
+          message: 'Please configure SUNFLOWER_JWT_TOKEN in environment variables'
+        };
+      }
+      
       const response = await axios.get(`${this.baseURL}/player/${playerId}/crops`, {
         headers: {
           'Authorization': `Bearer ${this.jwtToken}`,
@@ -223,7 +232,20 @@ class SunflowerLandService {
     try {
       await this.rateLimit();
       
+      // Kiểm tra JWT token
+      if (!this.jwtToken || this.jwtToken === 'your_jwt_token_here') {
+        return {
+          success: false,
+          error: 'JWT token not configured',
+          message: 'Please configure SUNFLOWER_JWT_TOKEN in environment variables'
+        };
+      }
+      
       const response = await axios.get(`${this.baseURL}/health`, {
+        headers: {
+          'Authorization': `Bearer ${this.jwtToken}`,
+          'Content-Type': 'application/json'
+        },
         timeout: 5000
       });
 
