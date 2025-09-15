@@ -139,6 +139,92 @@ app.get('/api/check-tables', async (req, res) => {
   }
 });
 
+// Run migrations manually
+app.post('/api/run-migrations', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    
+    // Create users table
+    await db.raw(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        telegram_chat_id VARCHAR(255),
+        telegram_username VARCHAR(255),
+        telegram_linked BOOLEAN DEFAULT FALSE,
+        notifications_enabled BOOLEAN DEFAULT TRUE,
+        notification_settings JSONB DEFAULT '{}',
+        last_login TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create crops table
+    await db.raw(`
+      CREATE TABLE IF NOT EXISTS crops (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        growth_time_hours INTEGER NOT NULL,
+        harvest_time_hours INTEGER NOT NULL,
+        image_url VARCHAR(500),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create user_crops table
+    await db.raw(`
+      CREATE TABLE IF NOT EXISTS user_crops (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        crop_id INTEGER REFERENCES crops(id) ON DELETE CASCADE,
+        planted_at TIMESTAMP NOT NULL,
+        harvest_time TIMESTAMP NOT NULL,
+        status VARCHAR(50) DEFAULT 'growing',
+        progress INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create notifications table
+    await db.raw(`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(100) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        read BOOLEAN DEFAULT FALSE,
+        sent_to_telegram BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Insert sample crops
+    await db.raw(`
+      INSERT INTO crops (name, description, growth_time_hours, harvest_time_hours, image_url) VALUES
+      ('Cà chua', 'Cà chua đỏ tươi, ngon ngọt', 72, 96, 'https://example.com/tomato.jpg'),
+      ('Cà rốt', 'Cà rốt cam, giàu vitamin A', 120, 144, 'https://example.com/carrot.jpg'),
+      ('Rau xà lách', 'Rau xà lách tươi, giòn ngon', 48, 72, 'https://example.com/lettuce.jpg')
+      ON CONFLICT DO NOTHING
+    `);
+    
+    res.json({ 
+      message: 'Migrations completed successfully!',
+      tables_created: ['users', 'crops', 'user_crops', 'notifications'],
+      sample_data_inserted: true
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Migrations failed', 
+      message: error.message
+    });
+  }
+});
+
 // Simple register route without database
 app.post('/api/auth/register', async (req, res) => {
   try {
