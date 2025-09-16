@@ -388,4 +388,75 @@ router.get('/exchange', async (req, res) => {
   }
 });
 
+// Lấy thông tin NFTs từ sfl.world
+router.get('/nfts', async (req, res) => {
+  try {
+    const result = await sunflowerService.getNFTs();
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching NFTs:', error);
+    res.status(500).json({ error: 'Failed to fetch NFTs data' });
+  }
+});
+
+// Lấy thông tin land boosts từ sfl.world
+router.get('/land/:nftId/boosts', async (req, res) => {
+  try {
+    const { nftId } = req.params;
+    const result = await sunflowerService.getLandBoosts(nftId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching land boosts:', error);
+    res.status(500).json({ error: 'Failed to fetch land boosts' });
+  }
+});
+
+// Lấy thông tin land summary từ sfl.world
+router.get('/land/:nftId/summary', async (req, res) => {
+  try {
+    const { nftId } = req.params;
+    const result = await sunflowerService.getLandSummary(nftId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching land summary:', error);
+    res.status(500).json({ error: 'Failed to fetch land summary' });
+  }
+});
+
+// Lấy thông tin land info bằng nft_id
+router.get('/land/info/nft_id/:nftId', async (req, res) => {
+  try {
+    const { nftId } = req.params;
+    const result = await sunflowerService.getLandInfoByNftId(nftId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching land info by nft_id:', error);
+    res.status(500).json({ error: 'Failed to fetch land info by nft_id' });
+  }
+});
+
+// Lấy thông tin land info bằng username
+router.get('/land/info/username/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const result = await sunflowerService.getLandInfoByUsername(username);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching land info by username:', error);
+    res.status(500).json({ error: 'Failed to fetch land info by username' });
+  }
+});
+
+// Lấy thông tin land info bằng farm_id
+router.get('/land/info/farm_id/:farmId', async (req, res) => {
+  try {
+    const { farmId } = req.params;
+    const result = await sunflowerService.getLandInfoByFarmId(farmId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching land info by farm_id:', error);
+    res.status(500).json({ error: 'Failed to fetch land info by farm_id' });
+  }
+});
+
 module.exports = router;

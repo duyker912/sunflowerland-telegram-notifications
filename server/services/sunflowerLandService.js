@@ -392,6 +392,156 @@ class SunflowerLandService {
       };
     }
   }
+
+  /**
+   * Lấy thông tin NFTs từ sfl.world
+   */
+  async getNFTs() {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/nfts`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching NFTs:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin land boosts từ sfl.world
+   */
+  async getLandBoosts(nftId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/land/${nftId}`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching land boosts:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin land summary từ sfl.world
+   */
+  async getLandSummary(nftId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/land/${nftId}`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching land summary:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin land info bằng nft_id
+   */
+  async getLandInfoByNftId(nftId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/land/info/nft_id/${nftId}`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching land info by nft_id:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin land info bằng username
+   */
+  async getLandInfoByUsername(username) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/land/info/username/${username}`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching land info by username:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin land info bằng farm_id
+   */
+  async getLandInfoByFarmId(farmId) {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/land/info/farm_id/${farmId}`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching land info by farm_id:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
 }
 
 module.exports = new SunflowerLandService();
