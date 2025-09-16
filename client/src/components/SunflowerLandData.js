@@ -264,12 +264,25 @@ const SunflowerLandData = () => {
             {/* Resources */}
             {data.landBoosts.data.resources && Object.keys(data.landBoosts.data.resources).length > 0 && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Resources ({Object.keys(data.landBoosts.data.resources).length})</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Resources ({Object.keys(data.landBoosts.data.resources).length})</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(data.landBoosts.data.resources).map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-medium capitalize">{key}:</span>
-                      <span className="ml-1 text-gray-600">{value || 'N/A'}</span>
+                    <div key={key} className="bg-white rounded-lg p-3 border">
+                      <div className="font-medium capitalize text-gray-900 mb-2">{key}</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Min:</span>
+                          <span className="font-medium text-red-600">{value.min}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Max:</span>
+                          <span className="font-medium text-green-600">{value.max}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Avg:</span>
+                          <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -279,12 +292,25 @@ const SunflowerLandData = () => {
             {/* Crops */}
             {data.landBoosts.data.crops && Object.keys(data.landBoosts.data.crops).length > 0 && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Crops ({Object.keys(data.landBoosts.data.crops).length})</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Crops ({Object.keys(data.landBoosts.data.crops).length})</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(data.landBoosts.data.crops).map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-medium capitalize">{key}:</span>
-                      <span className="ml-1 text-gray-600">{value || 'N/A'}</span>
+                    <div key={key} className="bg-white rounded-lg p-3 border">
+                      <div className="font-medium capitalize text-gray-900 mb-2">{key}</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Min:</span>
+                          <span className="font-medium text-red-600">{value.min}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Max:</span>
+                          <span className="font-medium text-green-600">{value.max}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Avg:</span>
+                          <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -294,12 +320,25 @@ const SunflowerLandData = () => {
             {/* Fruits */}
             {data.landBoosts.data.fruits && Object.keys(data.landBoosts.data.fruits).length > 0 && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Fruits ({Object.keys(data.landBoosts.data.fruits).length})</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Fruits ({Object.keys(data.landBoosts.data.fruits).length})</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(data.landBoosts.data.fruits).map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-medium capitalize">{key}:</span>
-                      <span className="ml-1 text-gray-600">{value || 'N/A'}</span>
+                    <div key={key} className="bg-white rounded-lg p-3 border">
+                      <div className="font-medium capitalize text-gray-900 mb-2">{key}</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Min:</span>
+                          <span className="font-medium text-red-600">{value.min}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Max:</span>
+                          <span className="font-medium text-green-600">{value.max}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Avg:</span>
+                          <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -309,12 +348,25 @@ const SunflowerLandData = () => {
             {/* Animals */}
             {data.landBoosts.data.animals && Object.keys(data.landBoosts.data.animals).length > 0 && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Animals ({Object.keys(data.landBoosts.data.animals).length})</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Animals ({Object.keys(data.landBoosts.data.animals).length})</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(data.landBoosts.data.animals).map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-medium capitalize">{key}:</span>
-                      <span className="ml-1 text-gray-600">{value || 'N/A'}</span>
+                    <div key={key} className="bg-white rounded-lg p-3 border">
+                      <div className="font-medium capitalize text-gray-900 mb-2">{key}</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Min:</span>
+                          <span className="font-medium text-red-600">{value.min}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Max:</span>
+                          <span className="font-medium text-green-600">{value.max}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Avg:</span>
+                          <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -324,12 +376,25 @@ const SunflowerLandData = () => {
             {/* Greenhouse */}
             {data.landBoosts.data.greenhouse && Object.keys(data.landBoosts.data.greenhouse).length > 0 && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Greenhouse ({Object.keys(data.landBoosts.data.greenhouse).length})</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Greenhouse ({Object.keys(data.landBoosts.data.greenhouse).length})</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(data.landBoosts.data.greenhouse).map(([key, value]) => (
-                    <div key={key} className="text-sm">
-                      <span className="font-medium capitalize">{key}:</span>
-                      <span className="ml-1 text-gray-600">{value || 'N/A'}</span>
+                    <div key={key} className="bg-white rounded-lg p-3 border">
+                      <div className="font-medium capitalize text-gray-900 mb-2">{key}</div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Min:</span>
+                          <span className="font-medium text-red-600">{value.min}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Max:</span>
+                          <span className="font-medium text-green-600">{value.max}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Avg:</span>
+                          <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -346,8 +411,66 @@ const SunflowerLandData = () => {
             <TrendingUp className="w-5 h-5 mr-2 text-sunflower-500" />
             Land Summary
           </h3>
-          <div className="text-gray-600">
-            <p>Thông tin chi tiết về farm sẽ được hiển thị ở đây khi có dữ liệu.</p>
+          <div className="space-y-4">
+            {/* Summary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-blue-50 rounded-lg p-4">
+                <div className="text-sm text-blue-600">Total Resources</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {Object.keys(data.landSummary.data.resources || {}).length}
+                </div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4">
+                <div className="text-sm text-green-600">Total Crops</div>
+                <div className="text-2xl font-bold text-green-900">
+                  {Object.keys(data.landSummary.data.crops || {}).length}
+                </div>
+              </div>
+              <div className="bg-yellow-50 rounded-lg p-4">
+                <div className="text-sm text-yellow-600">Total Fruits</div>
+                <div className="text-2xl font-bold text-yellow-900">
+                  {Object.keys(data.landSummary.data.fruits || {}).length}
+                </div>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-4">
+                <div className="text-sm text-purple-600">Greenhouse Items</div>
+                <div className="text-2xl font-bold text-purple-900">
+                  {Object.keys(data.landSummary.data.greenhouse || {}).length}
+                </div>
+              </div>
+            </div>
+
+            {/* Top Performers */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3">Top Resources (by Avg)</h4>
+                <div className="space-y-2">
+                  {Object.entries(data.landSummary.data.resources || {})
+                    .sort((a, b) => b[1].avg - a[1].avg)
+                    .slice(0, 5)
+                    .map(([key, value]) => (
+                      <div key={key} className="flex justify-between items-center">
+                        <span className="capitalize text-gray-700">{key}</span>
+                        <span className="font-medium text-blue-600">{value.avg.toFixed(2)}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3">Top Crops (by Avg)</h4>
+                <div className="space-y-2">
+                  {Object.entries(data.landSummary.data.crops || {})
+                    .sort((a, b) => b[1].avg - a[1].avg)
+                    .slice(0, 5)
+                    .map(([key, value]) => (
+                      <div key={key} className="flex justify-between items-center">
+                        <span className="capitalize text-gray-700">{key}</span>
+                        <span className="font-medium text-green-600">{value.avg.toFixed(2)}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
