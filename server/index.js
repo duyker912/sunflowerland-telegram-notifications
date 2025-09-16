@@ -100,6 +100,70 @@ app.post('/api/test-notification', async (req, res) => {
   }
 });
 
+// Update user wallet address
+app.put('/api/auth/update-wallet', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Token không hợp lệ' });
+    }
+    
+    const token = authHeader.substring(7);
+    let userId;
+    if (token.startsWith('jwt-token-')) {
+      userId = parseInt(token.replace('jwt-token-', ''));
+    } else {
+      return res.status(401).json({ error: 'Token format không hợp lệ' });
+    }
+    
+    const { wallet_address } = req.body;
+    
+    await db('users').where({ id: userId }).update({
+      wallet_address: wallet_address,
+      updated_at: new Date()
+    });
+    
+    res.json({ success: true, message: 'Wallet address updated successfully' });
+  } catch (error) {
+    console.error('Update wallet error:', error);
+    res.status(500).json({ error: 'Lỗi server khi cập nhật wallet address' });
+  }
+});
+
+// Update user farm ID
+app.put('/api/auth/update-farm', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Token không hợp lệ' });
+    }
+    
+    const token = authHeader.substring(7);
+    let userId;
+    if (token.startsWith('jwt-token-')) {
+      userId = parseInt(token.replace('jwt-token-', ''));
+    } else {
+      return res.status(401).json({ error: 'Token format không hợp lệ' });
+    }
+    
+    const { sunflower_player_id } = req.body;
+    
+    await db('users').where({ id: userId }).update({
+      sunflower_player_id: sunflower_player_id,
+      updated_at: new Date()
+    });
+    
+    res.json({ success: true, message: 'Farm ID updated successfully' });
+  } catch (error) {
+    console.error('Update farm error:', error);
+    res.status(500).json({ error: 'Lỗi server khi cập nhật farm ID' });
+  }
+});
+
 // Send test harvest notification
 app.post('/api/test-harvest-notification/:userId', async (req, res) => {
   try {
