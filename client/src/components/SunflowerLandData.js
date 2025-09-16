@@ -178,20 +178,127 @@ const SunflowerLandData = () => {
             <DollarSign className="w-5 h-5 mr-2 text-sunflower-500" />
             Tỷ giá Exchange
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-6">
+            {/* SFL Exchange Rates */}
             {data.exchange.data.sfl && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600">SFL Price</div>
-                <div className="text-lg font-semibold">
-                  {formatPrice(data.exchange.data.sfl.usd)} USD
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">SFL Exchange Rates</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-sm text-green-600">USD</div>
+                    <div className="text-lg font-bold text-green-900">
+                      ${data.exchange.data.sfl.usd.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-sm text-blue-600">EUR</div>
+                    <div className="text-lg font-bold text-blue-900">
+                      €{data.exchange.data.sfl.eur.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-yellow-50 rounded-lg p-4">
+                    <div className="text-sm text-yellow-600">SGD</div>
+                    <div className="text-lg font-bold text-yellow-900">
+                      S${data.exchange.data.sfl.sgd.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-red-50 rounded-lg p-4">
+                    <div className="text-sm text-red-600">BRL</div>
+                    <div className="text-lg font-bold text-red-900">
+                      R${data.exchange.data.sfl.brl.toFixed(6)}
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-sm text-purple-600">INR</div>
+                    <div className="text-lg font-bold text-purple-900">
+                      ₹{data.exchange.data.sfl.inr.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <div className="text-sm text-orange-600">RUB</div>
+                    <div className="text-lg font-bold text-orange-900">
+                      ₽{data.exchange.data.sfl.rub.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-indigo-50 rounded-lg p-4">
+                    <div className="text-sm text-indigo-600">UAH</div>
+                    <div className="text-lg font-bold text-indigo-900">
+                      ₴{data.exchange.data.sfl.uah.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-pink-50 rounded-lg p-4">
+                    <div className="text-sm text-pink-600">MATIC</div>
+                    <div className="text-lg font-bold text-pink-900">
+                      {data.exchange.data.sfl.matic.toFixed(6)}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-600">Total Supply</div>
+                  <div className="text-lg font-bold text-gray-900">
+                    {data.exchange.data.sfl.supply.toLocaleString()} SFL
+                  </div>
                 </div>
               </div>
             )}
+
+            {/* MATIC Exchange Rates */}
             {data.exchange.data.matic && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600">MATIC Price</div>
-                <div className="text-lg font-semibold">
-                  {formatPrice(data.exchange.data.matic.usd)} USD
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">MATIC Exchange Rates</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-sm text-green-600">USD</div>
+                    <div className="text-lg font-bold text-green-900">
+                      ${data.exchange.data.matic.usd.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-sm text-blue-600">EUR</div>
+                    <div className="text-lg font-bold text-blue-900">
+                      €{data.exchange.data.matic.eur.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-yellow-50 rounded-lg p-4">
+                    <div className="text-sm text-yellow-600">SGD</div>
+                    <div className="text-lg font-bold text-yellow-900">
+                      S${data.exchange.data.matic.sgd.toFixed(6)}
+                    </div>
+                  </div>
+                  <div className="bg-red-50 rounded-lg p-4">
+                    <div className="text-sm text-red-600">BRL</div>
+                    <div className="text-lg font-bold text-red-900">
+                      R${data.exchange.data.matic.brl.toFixed(6)}
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-sm text-purple-600">INR</div>
+                    <div className="text-lg font-bold text-purple-900">
+                      ₹{data.exchange.data.matic.inr.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <div className="text-sm text-orange-600">RUB</div>
+                    <div className="text-lg font-bold text-orange-900">
+                      ₽{data.exchange.data.matic.rub.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-indigo-50 rounded-lg p-4">
+                    <div className="text-sm text-indigo-600">UAH</div>
+                    <div className="text-lg font-bold text-indigo-900">
+                      ₴{data.exchange.data.matic.uah.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-pink-50 rounded-lg p-4">
+                    <div className="text-sm text-pink-600">SFL</div>
+                    <div className="text-lg font-bold text-pink-900">
+                      {data.exchange.data.matic.sfl.toFixed(6)}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -230,25 +337,102 @@ const SunflowerLandData = () => {
             <Package className="w-5 h-5 mr-2 text-sunflower-500" />
             NFTs Market
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600">Collectibles</div>
-              <div className="text-lg font-semibold">
-                {data.nfts.data.collectibles?.length || 0} items
+          <div className="space-y-6">
+            {/* NFT Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 rounded-lg p-4">
+                <div className="text-sm text-blue-600">Total Collectibles</div>
+                <div className="text-2xl font-bold text-blue-900">
+                  {data.nfts.data.collectibles?.length || 0}
+                </div>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-4">
+                <div className="text-sm text-purple-600">Total Wearables</div>
+                <div className="text-2xl font-bold text-purple-900">
+                  {data.nfts.data.wearables?.length || 0}
+                </div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4">
+                <div className="text-sm text-green-600">Last Updated</div>
+                <div className="text-sm font-medium text-green-900">
+                  {formatDate(data.nfts.data.updatedAt)}
+                </div>
               </div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600">Wearables</div>
-              <div className="text-lg font-semibold">
-                {data.nfts.data.wearables?.length || 0} items
+
+            {/* Top Collectibles */}
+            {data.nfts.data.collectibles && data.nfts.data.collectibles.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">Top Collectibles (by Floor Price)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {data.nfts.data.collectibles
+                    .filter(nft => nft.floor > 0)
+                    .sort((a, b) => b.floor - a.floor)
+                    .slice(0, 9)
+                    .map((nft) => (
+                    <div key={nft.id} className="bg-gray-50 rounded-lg p-4 border">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-medium text-gray-900">ID: {nft.id}</span>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {nft.collection}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Floor:</span>
+                          <span className="font-medium text-green-600">{nft.floor} ETH</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Last Sale:</span>
+                          <span className="font-medium text-blue-600">{nft.lastSalePrice} ETH</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Supply:</span>
+                          <span className="font-medium text-gray-900">{nft.supply.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="mt-4">
-            <div className="text-sm text-gray-600">Cập nhật lần cuối</div>
-            <div className="text-lg font-semibold">
-              {formatDate(data.nfts.data.updatedAt)}
-            </div>
+            )}
+
+            {/* Top Wearables */}
+            {data.nfts.data.wearables && data.nfts.data.wearables.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">Top Wearables (by Floor Price)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {data.nfts.data.wearables
+                    .filter(nft => nft.floor > 0)
+                    .sort((a, b) => b.floor - a.floor)
+                    .slice(0, 9)
+                    .map((nft) => (
+                    <div key={nft.id} className="bg-gray-50 rounded-lg p-4 border">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-medium text-gray-900">ID: {nft.id}</span>
+                        <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                          {nft.collection}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Floor:</span>
+                          <span className="font-medium text-green-600">{nft.floor} ETH</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Last Sale:</span>
+                          <span className="font-medium text-blue-600">{nft.lastSalePrice} ETH</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Supply:</span>
+                          <span className="font-medium text-gray-900">{nft.supply.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
