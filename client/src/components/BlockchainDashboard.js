@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import BlockchainEvents from './BlockchainEvents';
 import UserBlockchainData from './UserBlockchainData';
+import { api } from '../services/api';
 
 const BlockchainDashboard = () => {
   const [blockchainData, setBlockchainData] = useState({
@@ -29,14 +30,9 @@ const BlockchainDashboard = () => {
       setLoading(true);
       setError(null);
       
-      // Fetch real data from Railway API
-      const response = await fetch('/api/blockchain/test-all');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const realData = await response.json();
-      setBlockchainData(realData);
+      // Fetch real data from Railway API using api instance
+      const response = await api.get('/blockchain/test-all');
+      setBlockchainData(response.data);
       
     } catch (err) {
       console.error('Error fetching blockchain data:', err);
@@ -53,24 +49,14 @@ const BlockchainDashboard = () => {
   // Start monitoring
   const startMonitoring = async () => {
     try {
-      const response = await fetch('/api/blockchain/start-monitoring', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await api.post('/blockchain/start-monitoring');
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      if (result.success) {
+      if (response.data.success) {
         // Refresh data to get updated monitoring status
         await fetchBlockchainData();
         alert('✅ Bắt đầu monitor blockchain events!');
       } else {
-        throw new Error(result.error || 'Failed to start monitoring');
+        throw new Error(response.data.error || 'Failed to start monitoring');
       }
     } catch (err) {
       console.error('Error starting monitoring:', err);
@@ -81,24 +67,14 @@ const BlockchainDashboard = () => {
   // Stop monitoring
   const stopMonitoring = async () => {
     try {
-      const response = await fetch('/api/blockchain/stop-monitoring', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await api.post('/blockchain/stop-monitoring');
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      if (result.success) {
+      if (response.data.success) {
         // Refresh data to get updated monitoring status
         await fetchBlockchainData();
         alert('🛑 Đã dừng monitor blockchain events!');
       } else {
-        throw new Error(result.error || 'Failed to stop monitoring');
+        throw new Error(response.data.error || 'Failed to stop monitoring');
       }
     } catch (err) {
       console.error('Error stopping monitoring:', err);
