@@ -3,11 +3,11 @@ const portalService = require('./portalService');
 
 class SunflowerLandService {
   constructor() {
-    this.baseURL = process.env.SUNFLOWER_API_URL || 'https://api-dev.sunflower-land.com';
+    this.baseURL = process.env.SUNFLOWER_API_URL || 'https://sfl.world/api/v1';
     this.jwtToken = process.env.SUNFLOWER_JWT_TOKEN; // JWT token thay vì API key
     this.rateLimitDelay = 1000; // 1 second between requests
     this.lastRequestTime = 0;
-    this.useMockData = true; // Tạm thời sử dụng mock data
+    this.useMockData = false; // Sử dụng API thực tế
   }
 
   /**
@@ -36,12 +36,8 @@ class SunflowerLandService {
 
       await this.rateLimit();
       
-      // Sử dụng API thật của Sunflower Land
-      const response = await axios.get(`${this.baseURL}/portal/2749154680612546/player`, {
-        headers: {
-          'Authorization': `Bearer ${this.jwtToken}`,
-          'Content-Type': 'application/json'
-        },
+      // Sử dụng API mới từ sfl.world
+      const response = await axios.get(`${this.baseURL}/land/info/farm_id/${playerId}`, {
         timeout: 10000
       });
 
