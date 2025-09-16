@@ -7,55 +7,40 @@ import {
   ArrowLeft,
   Zap
 } from 'lucide-react';
+import { api } from '../services/api';
 
 const BlockchainEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mock data for demonstration
-  const mockEvents = [
-    {
-      id: 1,
-      type: 'Transfer',
-      from: '0x0000000000000000000000000000000000000000',
-      to: '0x1234567890123456789012345678901234567890',
-      value: '100.0',
-      transactionHash: '0xabc123...',
-      blockNumber: 12345678,
-      timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-      network: 'base'
-    },
-    {
-      id: 2,
-      type: 'Transfer',
-      from: '0x1234567890123456789012345678901234567890',
-      to: '0x2345678901234567890123456789012345678901',
-      value: '50.0',
-      transactionHash: '0xdef456...',
-      blockNumber: 12345679,
-      timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
-      network: 'base'
-    },
-    {
-      id: 3,
-      type: 'Approval',
-      from: '0x2345678901234567890123456789012345678901',
-      to: '0x3456789012345678901234567890123456789012',
-      value: '1000.0',
-      transactionHash: '0xghi789...',
-      blockNumber: 12345680,
-      timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-      network: 'base'
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Fetch real blockchain events from API
+      const response = await api.get('/blockchain/events');
+      if (response.data.success) {
+        setEvents(response.data.events || []);
+      } else {
+        throw new Error(response.data.error || 'Failed to fetch events');
+      }
+    } catch (err) {
+      console.error('Error fetching blockchain events:', err);
+      setError(`Không thể tải blockchain events: ${err.message}`);
+      setEvents([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setEvents(mockEvents);
-      setLoading(false);
-    }, 1000);
+    fetchEvents();
+    
+    // Refresh events every 30 seconds
+    const interval = setInterval(fetchEvents, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const getEventIcon = (type) => {

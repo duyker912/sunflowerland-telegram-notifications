@@ -31,15 +31,19 @@ const UserBlockchainData = () => {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      // In a real app, you would fetch this from the API
-      // For now, we'll use mock data
-      setUserData({
-        walletAddress: '0x1234567890123456789012345678901234567890',
-        flowerBalance: '1250.75',
-        sunflowerFarmId: 'farm_12345',
-        blockchainNetwork: 'base'
-      });
+      
+      // Fetch real user data from API
+      const response = await api.get('/auth/me');
+      if (response.data.user) {
+        setUserData({
+          walletAddress: response.data.user.wallet_address || '',
+          flowerBalance: response.data.user.flower_balance || '0',
+          sunflowerFarmId: response.data.user.sunflower_player_id || '',
+          blockchainNetwork: 'base'
+        });
+      }
     } catch (error) {
+      console.error('Error fetching user data:', error);
       toast.error('Lỗi khi tải dữ liệu blockchain');
     } finally {
       setLoading(false);
@@ -50,18 +54,31 @@ const UserBlockchainData = () => {
     try {
       setLinking(true);
       
-      // In a real app, you would connect to MetaMask or other wallet
-      const mockWalletAddress = '0x' + Math.random().toString(16).substr(2, 40);
-      
-      // Update user data
-      setUserData(prev => ({
-        ...prev,
-        walletAddress: mockWalletAddress
-      }));
-      
-      toast.success('Đã liên kết ví thành công!');
+      // Check if MetaMask is available
+      if (typeof window.ethereum !== 'undefined') {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const walletAddress = accounts[0];
+        
+        // Update user data via API
+        const response = await api.put('/auth/update-wallet', {
+          wallet_address: walletAddress
+        });
+        
+        if (response.data.success) {
+          setUserData(prev => ({
+            ...prev,
+            walletAddress: walletAddress
+          }));
+          toast.success('Đã liên kết ví thành công!');
+        } else {
+          throw new Error(response.data.error || 'Failed to link wallet');
+        }
+      } else {
+        throw new Error('MetaMask không được cài đặt');
+      }
     } catch (error) {
-      toast.error('Lỗi khi liên kết ví');
+      console.error('Error linking wallet:', error);
+      toast.error(`Lỗi khi liên kết ví: ${error.message}`);
     } finally {
       setLinking(false);
     }
@@ -69,15 +86,24 @@ const UserBlockchainData = () => {
 
   const handleUnlinkWallet = async () => {
     try {
-      setUserData(prev => ({
-        ...prev,
-        walletAddress: '',
-        flowerBalance: '0'
-      }));
+      // Update user data via API
+      const response = await api.put('/auth/update-wallet', {
+        wallet_address: null
+      });
       
-      toast.success('Đã hủy liên kết ví');
+      if (response.data.success) {
+        setUserData(prev => ({
+          ...prev,
+          walletAddress: '',
+          flowerBalance: '0'
+        }));
+        toast.success('Đã hủy liên kết ví');
+      } else {
+        throw new Error(response.data.error || 'Failed to unlink wallet');
+      }
     } catch (error) {
-      toast.error('Lỗi khi hủy liên kết ví');
+      console.error('Error unlinking wallet:', error);
+      toast.error(`Lỗi khi hủy liên kết ví: ${error.message}`);
     }
   };
 
@@ -85,17 +111,30 @@ const UserBlockchainData = () => {
     try {
       setLinking(true);
       
-      // In a real app, you would link to Sunflower Land farm
-      const mockFarmId = 'farm_' + Math.random().toString(16).substr(2, 8);
+      // Prompt user for farm ID
+      const farmId = prompt('Nhập Farm ID của bạn từ Sunflower Land:');
+      if (!farmId) {
+        setLinking(false);
+        return;
+      }
       
-      setUserData(prev => ({
-        ...prev,
-        sunflowerFarmId: mockFarmId
-      }));
+      // Update user data via API
+      const response = await api.put('/auth/update-farm', {
+        sunflower_player_id: farmId
+      });
       
-      toast.success('Đã liên kết farm thành công!');
+      if (response.data.success) {
+        setUserData(prev => ({
+          ...prev,
+          sunflowerFarmId: farmId
+        }));
+        toast.success('Đã liên kết farm thành công!');
+      } else {
+        throw new Error(response.data.error || 'Failed to link farm');
+      }
     } catch (error) {
-      toast.error('Lỗi khi liên kết farm');
+      console.error('Error linking farm:', error);
+      toast.error(`Lỗi khi liên kết farm: ${error.message}`);
     } finally {
       setLinking(false);
     }
