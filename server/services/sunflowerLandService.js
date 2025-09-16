@@ -342,6 +342,56 @@ class SunflowerLandService {
       };
     }
   }
+
+  /**
+   * Lấy thông tin giá cả từ sfl.world
+   */
+  async getPrices() {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/prices`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching prices:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Lấy thông tin exchange từ sfl.world
+   */
+  async getExchange() {
+    try {
+      await this.rateLimit();
+      
+      const response = await axios.get(`${this.baseURL}/exchange`, {
+        timeout: 10000
+      });
+      
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error fetching exchange:', error.message);
+      return {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+  }
 }
 
 module.exports = new SunflowerLandService();

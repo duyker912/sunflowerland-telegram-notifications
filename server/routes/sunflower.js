@@ -366,4 +366,26 @@ async function handleCropHarvestedEvent(data) {
   }
 }
 
+// Lấy thông tin giá cả từ sfl.world
+router.get('/prices', async (req, res) => {
+  try {
+    const result = await sunflowerService.getPrices();
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    res.status(500).json({ error: 'Failed to fetch prices' });
+  }
+});
+
+// Lấy thông tin exchange từ sfl.world
+router.get('/exchange', async (req, res) => {
+  try {
+    const result = await sunflowerService.getExchange();
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching exchange:', error);
+    res.status(500).json({ error: 'Failed to fetch exchange data' });
+  }
+});
+
 module.exports = router;
