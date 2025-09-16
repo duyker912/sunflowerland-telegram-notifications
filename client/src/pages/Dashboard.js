@@ -12,10 +12,12 @@ import {
   Bell,
   RefreshCw,
   Network,
-  Coins
+  Coins,
+  MapPin
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import BlockchainDashboard from '../components/BlockchainDashboard';
+import SunflowerLandData from '../components/SunflowerLandData';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -155,6 +157,19 @@ const Dashboard = () => {
             <div className="flex items-center space-x-2">
               <Network className="w-4 h-4" />
               <span>Blockchain</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('sunflower')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'sunflower'
+                ? 'border-sunflower-500 text-sunflower-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <MapPin className="w-4 h-4" />
+              <span>Sunflower Land</span>
             </div>
           </button>
         </nav>
@@ -348,6 +363,10 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {activeTab === 'sunflower' && (
+        <SunflowerLandData />
       )}
     </div>
   );
