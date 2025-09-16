@@ -71,32 +71,19 @@ app.get('/api/blockchain/test', (req, res) => {
 });
 
 // Test all blockchain connections
-app.get('/api/blockchain/test-all', (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      base: {
-        success: true,
-        data: {
-          network: 'Base',
-          chainId: '8453',
-          blockNumber: 12345678,
-          gasPrice: '0.001 gwei',
-          connected: true
-        }
-      },
-      polygon: {
-        success: true,
-        data: {
-          network: 'Polygon',
-          chainId: '137',
-          blockNumber: 87654321,
-          gasPrice: '30 gwei',
-          connected: true
-        }
-      }
-    }
-  });
+app.get('/api/blockchain/test-all', async (req, res) => {
+  try {
+    const polygonService = require('./services/polygonService');
+    const result = await polygonService.testAllConnections();
+    res.json(result);
+  } catch (error) {
+    console.error('Error testing blockchain connections:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to test blockchain connections',
+      data: null
+    });
+  }
 });
 
 // Test notification service

@@ -1,6 +1,7 @@
 // Simple Blockchain Routes
 const express = require('express');
 const router = express.Router();
+const polygonService = require('../services/polygonService');
 
 // Test blockchain connection
 router.get('/test', (req, res) => {
@@ -15,16 +16,11 @@ router.get('/test', (req, res) => {
 // Test Base network connection
 router.get('/base/test', async (req, res) => {
   try {
-    // Mock Base network test
+    const result = await polygonService.testAllConnections();
     res.json({
-      success: true,
-      data: {
-        network: 'Base',
-        chainId: '8453',
-        blockNumber: 12345678,
-        gasPrice: '0.001 gwei',
-        connected: true
-      }
+      success: result.data.base.success,
+      data: result.data.base.data,
+      error: result.data.base.error
     });
   } catch (error) {
     res.status(500).json({
@@ -37,16 +33,11 @@ router.get('/base/test', async (req, res) => {
 // Test Polygon network connection
 router.get('/polygon/test', async (req, res) => {
   try {
-    // Mock Polygon network test
+    const result = await polygonService.testAllConnections();
     res.json({
-      success: true,
-      data: {
-        network: 'Polygon',
-        chainId: '137',
-        blockNumber: 87654321,
-        gasPrice: '30 gwei',
-        connected: true
-      }
+      success: result.data.polygon.success,
+      data: result.data.polygon.data,
+      error: result.data.polygon.error
     });
   } catch (error) {
     res.status(500).json({
@@ -59,31 +50,8 @@ router.get('/polygon/test', async (req, res) => {
 // Test all connections
 router.get('/test-all', async (req, res) => {
   try {
-    res.json({
-      success: true,
-      data: {
-        base: {
-          success: true,
-          data: {
-            network: 'Base',
-            chainId: '8453',
-            blockNumber: 12345678,
-            gasPrice: '0.001 gwei',
-            connected: true
-          }
-        },
-        polygon: {
-          success: true,
-          data: {
-            network: 'Polygon',
-            chainId: '137',
-            blockNumber: 87654321,
-            gasPrice: '30 gwei',
-            connected: true
-          }
-        }
-      }
-    });
+    const result = await polygonService.testAllConnections();
+    res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -95,17 +63,56 @@ router.get('/test-all', async (req, res) => {
 // Get FLOWER token info
 router.get('/token/flower', async (req, res) => {
   try {
+    const result = await polygonService.getTokenInfo('0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380', 'base');
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get blockchain events
+router.get('/events', async (req, res) => {
+  try {
+    const db = require('../config/database');
+    const events = await db('blockchain_events')
+      .orderBy('timestamp', 'desc')
+      .limit(50);
+    
     res.json({
       success: true,
-      data: {
-        address: '0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380',
-        name: 'FLOWER',
-        symbol: 'FLOWER',
-        decimals: 18,
-        totalSupply: '21000000',
-        network: 'base'
-      }
+      events: events
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Start monitoring
+router.post('/start-monitoring', async (req, res) => {
+  try {
+    const eventMonitor = require('../services/eventMonitor');
+    const result = await eventMonitor.startMonitoring();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Stop monitoring
+router.post('/stop-monitoring', async (req, res) => {
+  try {
+    const eventMonitor = require('../services/eventMonitor');
+    const result = await eventMonitor.stopMonitoring();
+    res.json(result);
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -35,6 +35,66 @@ class MultiChainService {
   }
 
   /**
+   * Test tất cả kết nối blockchain
+   */
+  async testAllConnections() {
+    const results = {};
+    
+    // Test Base network
+    try {
+      const baseProvider = this.getProvider('base');
+      const baseBlockNumber = await baseProvider.getBlockNumber();
+      const baseGasPrice = await baseProvider.getFeeData();
+      
+      results.base = {
+        success: true,
+        data: {
+          network: 'Base',
+          chainId: '8453',
+          blockNumber: baseBlockNumber,
+          gasPrice: `${ethers.formatUnits(baseGasPrice.gasPrice, 'gwei')} gwei`,
+          connected: true
+        }
+      };
+    } catch (error) {
+      results.base = {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+
+    // Test Polygon network
+    try {
+      const polygonProvider = this.getProvider('polygon');
+      const polygonBlockNumber = await polygonProvider.getBlockNumber();
+      const polygonGasPrice = await polygonProvider.getFeeData();
+      
+      results.polygon = {
+        success: true,
+        data: {
+          network: 'Polygon',
+          chainId: '137',
+          blockNumber: polygonBlockNumber,
+          gasPrice: `${ethers.formatUnits(polygonGasPrice.gasPrice, 'gwei')} gwei`,
+          connected: true
+        }
+      };
+    } catch (error) {
+      results.polygon = {
+        success: false,
+        error: error.message,
+        data: null
+      };
+    }
+
+    return {
+      success: true,
+      data: results
+    };
+  }
+
+  /**
    * Lấy thông tin farm từ blockchain
    */
   async getFarmData(farmId, network = 'polygon') {
