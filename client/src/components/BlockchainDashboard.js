@@ -27,72 +27,20 @@ const BlockchainDashboard = () => {
   const fetchBlockchainData = async () => {
     try {
       setLoading(true);
+      setError(null);
       
-      // Try to fetch real data from Railway, fallback to mock data
-      let mockData = {
-        networks: {
-          base: {
-            success: true,
-            data: {
-              network: 'Base',
-              chainId: '8453',
-              blockNumber: 12345678,
-              gasPrice: '0.001 gwei',
-              connected: true
-            }
-          },
-          polygon: {
-            success: true,
-            data: {
-              network: 'Polygon',
-              chainId: '137',
-              blockNumber: 87654321,
-              gasPrice: '30 gwei',
-              connected: true
-            }
-          }
-        },
-        tokenInfo: {
-          address: '0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380',
-          name: 'FLOWER',
-          symbol: 'FLOWER',
-          decimals: 18,
-          totalSupply: '21000000',
-          network: 'base'
-        },
-        farmContracts: [
-          {
-            address: '0xFarm123456789012345678901234567890123456',
-            name: 'Sunflower Farm Contract',
-            type: 'Farm',
-            verified: true,
-            sources: ['holders', 'pattern']
-          }
-        ],
-        monitoringStatus: {
-          totalContracts: 1,
-          networks: {
-            base: ['0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380']
-          }
-        }
-      };
-      
-      // Try to fetch from Railway first
-      try {
-        const response = await fetch('/api/blockchain/test-all');
-        if (response.ok) {
-          const realData = await response.json();
-          setBlockchainData(realData);
-          return;
-        }
-      } catch (err) {
-        console.log('Using mock data:', err.message);
+      // Fetch real data from Railway API
+      const response = await fetch('/api/blockchain/test-all');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      setBlockchainData(mockData);
+      const realData = await response.json();
+      setBlockchainData(realData);
       
     } catch (err) {
-      setError(err.message);
+      console.error('Error fetching blockchain data:', err);
+      setError(`Không thể kết nối đến blockchain API: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -105,36 +53,56 @@ const BlockchainDashboard = () => {
   // Start monitoring
   const startMonitoring = async () => {
     try {
-      // Mock start monitoring
-      setBlockchainData(prev => ({
-        ...prev,
-        monitoringStatus: {
-          totalContracts: 1,
-          networks: {
-            base: ['0x3e12b9d6a4d12cd9b4a6d613872d0eb32f68b380']
-          }
-        }
-      }));
-      alert('✅ Bắt đầu monitor blockchain events!');
+      const response = await fetch('/api/blockchain/start-monitoring', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        // Refresh data to get updated monitoring status
+        await fetchBlockchainData();
+        alert('✅ Bắt đầu monitor blockchain events!');
+      } else {
+        throw new Error(result.error || 'Failed to start monitoring');
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Error starting monitoring:', err);
+      setError(`Không thể bắt đầu monitoring: ${err.message}`);
     }
   };
 
   // Stop monitoring
   const stopMonitoring = async () => {
     try {
-      // Mock stop monitoring
-      setBlockchainData(prev => ({
-        ...prev,
-        monitoringStatus: {
-          totalContracts: 0,
-          networks: {}
-        }
-      }));
-      alert('🛑 Đã dừng monitor blockchain events!');
+      const response = await fetch('/api/blockchain/stop-monitoring', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        // Refresh data to get updated monitoring status
+        await fetchBlockchainData();
+        alert('🛑 Đã dừng monitor blockchain events!');
+      } else {
+        throw new Error(result.error || 'Failed to stop monitoring');
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Error stopping monitoring:', err);
+      setError(`Không thể dừng monitoring: ${err.message}`);
     }
   };
 
@@ -187,23 +155,25 @@ const BlockchainDashboard = () => {
               <Network className="w-6 h-6 text-blue-500 mr-2" />
               <h3 className="text-lg font-semibold">Base Network</h3>
             </div>
-            <div className={`w-3 h-3 rounded-full ${blockchainData.networks.base?.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${blockchainData.networks?.base?.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
           </div>
           
-          {blockchainData.networks.base?.success ? (
+          {blockchainData.networks?.base?.success ? (
             <div className="space-y-2">
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Chain ID:</span> {blockchainData.networks.base.data?.chainId}
+                <span className="font-medium">Chain ID:</span> {blockchainData.networks.base.data?.chainId || 'N/A'}
               </p>
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Block:</span> {blockchainData.networks.base.data?.blockNumber?.toLocaleString()}
+                <span className="font-medium">Block:</span> {blockchainData.networks.base.data?.blockNumber?.toLocaleString() || 'N/A'}
               </p>
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Gas Price:</span> {blockchainData.networks.base.data?.gasPrice}
+                <span className="font-medium">Gas Price:</span> {blockchainData.networks.base.data?.gasPrice || 'N/A'}
               </p>
             </div>
           ) : (
-            <p className="text-red-500 text-sm">Connection failed</p>
+            <p className="text-red-500 text-sm">
+              {blockchainData.networks?.base?.error || 'Connection failed'}
+            </p>
           )}
         </div>
 
@@ -214,23 +184,25 @@ const BlockchainDashboard = () => {
               <Network className="w-6 h-6 text-purple-500 mr-2" />
               <h3 className="text-lg font-semibold">Polygon Network</h3>
             </div>
-            <div className={`w-3 h-3 rounded-full ${blockchainData.networks.polygon?.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${blockchainData.networks?.polygon?.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
           </div>
           
-          {blockchainData.networks.polygon?.success ? (
+          {blockchainData.networks?.polygon?.success ? (
             <div className="space-y-2">
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Chain ID:</span> {blockchainData.networks.polygon.data?.chainId}
+                <span className="font-medium">Chain ID:</span> {blockchainData.networks.polygon.data?.chainId || 'N/A'}
               </p>
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Block:</span> {blockchainData.networks.polygon.data?.blockNumber?.toLocaleString()}
+                <span className="font-medium">Block:</span> {blockchainData.networks.polygon.data?.blockNumber?.toLocaleString() || 'N/A'}
               </p>
               <p className="text-sm text-gray-600">
-                <span className="font-medium">Gas Price:</span> {blockchainData.networks.polygon.data?.gasPrice}
+                <span className="font-medium">Gas Price:</span> {blockchainData.networks.polygon.data?.gasPrice || 'N/A'}
               </p>
             </div>
           ) : (
-            <p className="text-red-500 text-sm">Connection failed</p>
+            <p className="text-red-500 text-sm">
+              {blockchainData.networks?.polygon?.error || 'Connection failed'}
+            </p>
           )}
         </div>
       </div>
@@ -244,29 +216,34 @@ const BlockchainDashboard = () => {
               <h3 className="text-lg font-semibold">FLOWER Token</h3>
             </div>
             <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-              {blockchainData.tokenInfo.network}
+              {blockchainData.tokenInfo.network || 'N/A'}
             </span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-600">Name</p>
-              <p className="font-medium">{blockchainData.tokenInfo.name}</p>
+              <p className="font-medium">{blockchainData.tokenInfo.name || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Symbol</p>
-              <p className="font-medium">{blockchainData.tokenInfo.symbol}</p>
+              <p className="font-medium">{blockchainData.tokenInfo.symbol || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Supply</p>
-              <p className="font-medium">{parseFloat(blockchainData.tokenInfo.totalSupply).toLocaleString()}</p>
+              <p className="font-medium">
+                {blockchainData.tokenInfo.totalSupply ? 
+                  parseFloat(blockchainData.tokenInfo.totalSupply).toLocaleString() : 
+                  'N/A'
+                }
+              </p>
             </div>
           </div>
           
           <div className="mt-4">
             <p className="text-sm text-gray-600">Contract Address</p>
             <p className="font-mono text-sm bg-gray-100 p-2 rounded">
-              {blockchainData.tokenInfo.address}
+              {blockchainData.tokenInfo.address || 'N/A'}
             </p>
           </div>
         </div>
@@ -321,20 +298,20 @@ const BlockchainDashboard = () => {
       </div>
 
       {/* Farm Contracts */}
-      {blockchainData.farmContracts.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center mb-4">
-            <TrendingUp className="w-6 h-6 text-green-500 mr-2" />
-            <h3 className="text-lg font-semibold">Discovered Farm Contracts</h3>
-          </div>
-          
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center mb-4">
+          <TrendingUp className="w-6 h-6 text-green-500 mr-2" />
+          <h3 className="text-lg font-semibold">Discovered Farm Contracts</h3>
+        </div>
+        
+        {blockchainData.farmContracts && blockchainData.farmContracts.length > 0 ? (
           <div className="space-y-3">
             {blockchainData.farmContracts.map((farm, index) => (
               <div key={index} className="border rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">{farm.name}</p>
-                    <p className="text-sm text-gray-600">{farm.type}</p>
+                    <p className="font-medium">{farm.name || 'Unknown Farm'}</p>
+                    <p className="text-sm text-gray-600">{farm.type || 'Unknown Type'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     {farm.verified && (
@@ -342,26 +319,32 @@ const BlockchainDashboard = () => {
                         Verified
                       </span>
                     )}
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                      {farm.sources.join(', ')}
-                    </span>
+                    {farm.sources && farm.sources.length > 0 && (
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                        {farm.sources.join(', ')}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p className="font-mono text-sm text-gray-500 mt-2">
-                  {farm.address}
+                  {farm.address || 'N/A'}
                 </p>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-gray-500 text-center py-4">
+            Không tìm thấy farm contracts nào
+          </p>
+        )}
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <Users className="w-8 h-8 text-blue-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-900">
-            {blockchainData.farmContracts.length}
+            {blockchainData.farmContracts?.length || 0}
           </p>
           <p className="text-gray-600">Farm Contracts</p>
         </div>
@@ -369,7 +352,7 @@ const BlockchainDashboard = () => {
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <Zap className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-900">
-            {blockchainData.monitoringStatus.totalContracts}
+            {blockchainData.monitoringStatus?.totalContracts || 0}
           </p>
           <p className="text-gray-600">Active Monitors</p>
         </div>
@@ -377,9 +360,11 @@ const BlockchainDashboard = () => {
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <Network className="w-8 h-8 text-green-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-900">
-            {Object.keys(blockchainData.networks).filter(network => 
-              blockchainData.networks[network]?.success
-            ).length}
+            {blockchainData.networks ? 
+              Object.keys(blockchainData.networks).filter(network => 
+                blockchainData.networks[network]?.success
+              ).length : 0
+            }
           </p>
           <p className="text-gray-600">Connected Networks</p>
         </div>
